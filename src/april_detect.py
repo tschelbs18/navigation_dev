@@ -4,14 +4,16 @@ import cv2
 import apriltag
 from cv_bridge import CvBridge
 from std_msgs.msg import String
-from std_msgs.msg import Float32MultiArray
+#from std_msgs.msg import Float32MultiArray
+from navigation_dev.msg import AprilDetections
+from navigation_dev.msg import TMatrix 
 
 from sensor_msgs.msg import Image 
 from sensor_msgs.msg import CameraInfo 
 
 bridge = CvBridge()
 april_pub = rospy.Publisher('/april_detections', Image, queue_size=2)
-poses_pub = rospy.Publisher('/tag_poses', Float32MultiArray, queue_size=2)
+poses_pub = rospy.Publisher('/tag_poses', AprilDetections, queue_size=2)
 K_params = [] 
 
 def process_tags(detector, K, s, results, image, visualize=True):
@@ -29,19 +31,26 @@ def process_tags(detector, K, s, results, image, visualize=True):
     """
 
     tfs = {}
-    poses_msg = Float32MultiArray()
-    poses_msg.data = []
+    poses_msg = AprilDetections()
+    #poses_msg.data = []
 
     for r in results:
     	# extract the bounding box (x, y)-coordinates for the AprilTag
     	# and convert each of the (x, y)-coordinate pairs to integers
         #print(r) 
         T, _, _ = detector.detection_pose(r, K, s)
-        tfs[r.tag_id] = T
+        #tfs[r.tag_id] = T
 
         T_list = T.flatten().tolist()
-        poses_msg.data.append(r.tag_id)
-        poses_msg.data += T_list
+        tm = TMatrix()
+        tm.matrix += T_list
+
+        poses_msg.detections.append(tm)
+        poses_msg.ids.append(r.tag_id)
+
+
+        #poses_msg.data.append(r.tag_id)
+        #poses_msg.data += T_list
 
         if visualize:
     	    (ptA, ptB, ptC, ptD) = r.corners
@@ -63,7 +72,6 @@ def process_tags(detector, K, s, results, image, visualize=True):
     		cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
         print("[INFO] tag family: {}".format(tagFamily))
-    print("tfs: " + str(tfs))
     return image, poses_msg
 
 def params_callback(msg):
@@ -95,6 +103,8 @@ def cam_callback(msg):
     #K = [593.55524, 730.58258, 687.50338, 313.33228] 
     s = 0.159
     img_dets, tfs = process_tags(detector, K_params, s, results, img_np)
+    #tfs.header.stamp = msg.header.stamp
+    tfs.header.stamp = rospy.Time.now() 
     img = bridge.cv2_to_imgmsg(img_dets) 
     april_pub.publish(img)
     poses_pub.publish(tfs)
