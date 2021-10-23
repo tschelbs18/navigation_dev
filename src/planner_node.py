@@ -18,10 +18,10 @@ stop = 0.0
 def parse_args():
 
     parser = argparse.ArgumentParser(description='Inputs for JetBot')
-    parser.add_argument("--left_forward_speed", default=0.75)
-    parser.add_argument("--right_forward_speed", default=0.65)
-    parser.add_argument("--left_turn_speed", default=0.57)
-    parser.add_argument("--right_turn_speed", default=0.55)
+    parser.add_argument("--left_forward_speed", default=0.78)
+    parser.add_argument("--right_forward_speed", default=0.75)
+    parser.add_argument("--left_turn_speed", default=0.68)
+    parser.add_argument("--right_turn_speed", default=0.65)
     args = parser.parse_args()
     print(args)
     return args
