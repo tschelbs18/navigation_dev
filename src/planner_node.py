@@ -29,11 +29,12 @@ def parse_args():
 
 def move_forward(distance, left_speed, right_speed, forward_rate=0.415):
     duration = int(round(distance/forward_rate * 10))
+    duration = 10
 
     for _ in range(duration):
 
         msg = Float32MultiArray()
-        msg.data = [move, left_speed, right_speed]
+        msg.data = [move, -left_speed, -right_speed]
         ctrl_pub.publish(msg)
         time.sleep(0.1)
 
@@ -103,11 +104,11 @@ def pose_callback(msg):
                 if z_translation >= 0.2:
                     print("Moving forward fast!")
                     move_forward(
-                        .1, args.left_forward_speed, args.right_forward_speed)
+                        z_translation/5, args.left_forward_speed, args.right_forward_speed)
                 else:
                     print("Moving forward slow")
                     move_forward(
-                        .05, args.left_forward_speed, args.right_forward_speed)
+                        z_translation/2, args.left_forward_speed, args.right_forward_speed)
 
         else:
             # Are these both meant to be left turns?
