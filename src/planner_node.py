@@ -29,6 +29,7 @@ def parse_args():
 
 def move_forward(distance, left_speed, right_speed, forward_rate=0.415):
     duration = int(round(distance/forward_rate * 10))
+    duration = 1
 
     for _ in range(duration):
 
@@ -44,6 +45,7 @@ def move_forward(distance, left_speed, right_speed, forward_rate=0.415):
 
 def right_turn(turn, left_speed, right_speed, turn_rate=2.52):
     duration = int(round(turn/turn_rate * 10))
+    duration = 1
 
     for _ in range(duration):
 
@@ -60,6 +62,7 @@ def right_turn(turn, left_speed, right_speed, turn_rate=2.52):
 def left_turn(turn, left_speed, right_speed, turn_rate=1.87):
 
     duration = int(round(turn/turn_rate * 10))
+    duration = 1
 
     for _ in range(duration):
 
