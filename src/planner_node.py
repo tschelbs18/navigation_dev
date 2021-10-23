@@ -80,7 +80,7 @@ def pose_callback(msg):
 
     t_matrix = msg.pose
 
-    if len(t_matrix.matrix == 0):
+    if len(t_matrix.matrix) == 0:
         print("Finding April Tag!")
         right_turn(15, args.left_turn_speed, args.right_turn_speed)
     else:
