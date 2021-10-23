@@ -79,6 +79,7 @@ def pose_callback(msg):
     ctrl_pub.publish(cmd_msg)
 
     t_matrix = msg.pose
+    print(t_matrix.matrix)
 
     if not t_matrix:
         right_turn(15, args.left_turn_speed, args.right_turn_speed)
