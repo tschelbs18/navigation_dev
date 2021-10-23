@@ -116,7 +116,7 @@ def pose_callback(msg):
                 right_turn(0.2, args.left_turn_speed, args.right_turn_speed)
                 
             else:
-                print("Unaccounted situation!")
+                print("Unaccounted situation! Help! x = {}, z = {}, orientation = {}".format(x,z,orientation))
             
         else:
             
