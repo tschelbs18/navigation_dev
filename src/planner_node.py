@@ -42,7 +42,7 @@ def move_forward(distance, left_speed, right_speed, forward_rate=0.415):
     time.sleep(1.0)
 
 
-def right_turn(turn, left_speed, right_speed, turn_rate=3.02):
+def right_turn(turn, left_speed, right_speed, turn_rate=2.52):
     duration = int(round(turn/turn_rate * 10))
 
     for _ in range(duration):
@@ -80,11 +80,11 @@ def pose_callback(msg):
 
     t_matrix = msg.pose
 
-    if not t_matrix:
+    if len(t_matrix.matrix == 0):
         print("Finding April Tag!")
         right_turn(15, args.left_turn_speed, args.right_turn_speed)
     else:
-
+        print("Matrix length = " + str(len(t_matrix.matrix)))
         r13, r31, x_translation, z_translation = t_matrix.matrix[
             2], t_matrix.matrix[8], t_matrix.matrix[3], t_matrix.matrix[11]
         print('r13: ' + str(r13))
