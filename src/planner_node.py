@@ -18,10 +18,10 @@ stop = 0.0
 def parse_args():
 
     parser = argparse.ArgumentParser(description='Inputs for JetBot')
-    parser.add_argument("--left_forward_speed", default=0.88)
-    parser.add_argument("--right_forward_speed", default=0.85)
-    parser.add_argument("--left_turn_speed", default=0.78)
-    parser.add_argument("--right_turn_speed", default=0.75)
+    parser.add_argument("--left_forward_speed", default=0.98)
+    parser.add_argument("--right_forward_speed", default=0.95)
+    parser.add_argument("--left_turn_speed", default=0.88)
+    parser.add_argument("--right_turn_speed", default=0.85)
     args = parser.parse_args()
     print(args)
     return args
@@ -33,7 +33,7 @@ def move_forward(distance, left_speed, right_speed, forward_rate=0.415):
     for _ in range(duration):
 
         msg = Float32MultiArray()
-        msg.data = [move, -left_speed, -right_speed]
+        msg.data = [move, left_speed, right_speed]
         ctrl_pub.publish(msg)
         time.sleep(0.1)
 
