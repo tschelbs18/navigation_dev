@@ -95,9 +95,11 @@ def pose_callback(msg):
                 left_turn(0.5, args.left_turn_speed, args.right_turn_speed)
             else:
                 if z_translation >= 0.2:
+                    print("Moving forward fast!")
                     move_forward(
                         z_translation/5, args.left_forward_speed, args.right_forward_speed)
                 else:
+                    print("Moving forward slow")
                     move_forward(
                         z_translation/2, args.left_forward_speed, args.right_forward_speed)
 
