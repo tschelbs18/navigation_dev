@@ -25,7 +25,7 @@ def tag_callback(msg):
 
     else:
 
-        pose_msg.pose = []
+        pose_msg.pose.matrix = []
 
     pose_pub.publish(pose_msg)
 
