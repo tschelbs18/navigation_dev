@@ -76,7 +76,7 @@ def left_turn(turn, left_speed, right_speed, turn_rate=1.87):
 def pose_callback(msg):
 
     cmd_msg = Float32MultiArray()
-    ctrl_pub.publish(cmd_msg)
+    # ctrl_pub.publish(cmd_msg)
 
     t_matrix = msg.pose
     print(t_matrix.matrix)
@@ -107,7 +107,7 @@ def pose_callback(msg):
                         z_translation/2, args.left_forward_speed, args.right_forward_speed)
 
         else:
-
+            # Are these both meant to be left turns?
             if r13 > 0.05:
                 left_turn(0.5, args.left_turn_speed, args.right_turn_speed)
             elif r13 < 0.05:
