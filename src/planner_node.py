@@ -5,6 +5,7 @@ import cv2
 import apriltag
 import argparse
 import time
+import numpy as np
 from std_msgs.msg import Float32MultiArray
 from navigation_dev.msg import AprilDetections
 from navigation_dev.msg import Pose
@@ -13,6 +14,7 @@ from navigation_dev.msg import Pose
 ctrl_pub = rospy.Publisher('/ctrl_cmd', Float32MultiArray, queue_size=2)
 move = 0.0
 stop = 1.0
+april_tag_distance = 0.5
 
 
 def parse_args():
@@ -82,42 +84,60 @@ def pose_callback(msg):
 
     if len(t_matrix.matrix) == 0:
         print("Finding April Tag!")
-        right_turn(15, args.left_turn_speed, args.right_turn_speed)
+        left_turn(0.2, args.left_turn_speed, args.right_turn_speed)
     else:
         print("Matrix length = " + str(len(t_matrix.matrix)))
-        r13, r31, x_translation, z_translation = t_matrix.matrix[
-            2], t_matrix.matrix[8], t_matrix.matrix[3], t_matrix.matrix[11]
-        print('r13: ' + str(r13))
-        print('r31: ' + str(r31))
-        print('x_trans: ' + str(x_translation))
-        print('z_trans: ' + str(z_translation))
-        if z_translation > 0.05:
+        x,y,z,orientation = t_matrix.matrix[0], t_matrix.matrix[1], t_matrix.matrix[2], t_matrix.matrix[3]
+        print('x: ' + str(x))
+        print('z: ' + str(z))
+        print('orientation: ' + str(orientation))
+        if z > april_tag_distance + 0.05:
+            waypoint_reached = 0
 
-            if x_translation < -0.05:
-                print("Turning right!")
-                right_turn(0.5, args.left_turn_speed, args.right_turn_speed)
-            elif x_translation > 0.05:
-                print("Turning left!")
-                left_turn(0.5, args.left_turn_speed, args.right_turn_speed)
-            else:
-                if z_translation >= 0.2:
+            if x > 0 and orientation < 0 or x < 0 and orientation > 0:
+                
+                if z > april_tag_distance + 0.2:
                     print("Moving forward fast!")
                     move_forward(
-                        z_translation/5, args.left_forward_speed, args.right_forward_speed)
+                        (z-april_tag_distance)/5, args.left_forward_speed, args.right_forward_speed)
                 else:
                     print("Moving forward slow")
                     move_forward(
-                        z_translation/2, args.left_forward_speed, args.right_forward_speed)
-
-        else:
-            # Are these both meant to be left turns?
-            if r13 > 0.05:
-                left_turn(0.5, args.left_turn_speed, args.right_turn_speed)
-            elif r13 < 0.05:
-                right_turn(0.5, args.left_turn_speed, args.right_turn_speed)
+                        (z-april_tag_distance)/2, args.left_forward_speed, args.right_forward_speed)
+                    
+            elif x < 0 and orientation < 0:
+                
+                print("Turning left!")
+                left_turn(0.2, args.left_turn_speed, args.right_turn_speed)
+            
+            elif x > 0 and orientation > 0:
+                
+                print("Turning right!")
+                right_turn(0.2, args.left_turn_speed, args.right_turn_speed)
+                
             else:
-                print('waypoint 1 reached!')
-                time.sleep(5.0)
+                print("Unaccounted situation!")
+            
+        else:
+            
+            if orientation > 0.1:
+                print("Turning right!")
+                right_turn(0.1, args.left_turn_speed, args.right_turn_speed)
+                
+            elif orientation < -0.1:
+                print("Turning left!")
+                left_turn(0.5, args.left_turn_speed, args.right_turn_speed)
+                
+            else:
+                if waypoint_reached == 0:
+                    print("Waypoint reached, current position is x = {}, z = {} with an error of {}".format(x,z,np.sqrt(x**2 + z**2)))
+                    time.sleep(5.0)
+                    waypoint_reached = 1
+                else:
+                    print("Turning left!")
+                    left_turn(0.3, args.left_turn_speed, args.right_turn_speed)
+                
+
 
 
 if __name__ == "__main__":
