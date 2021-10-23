@@ -79,7 +79,6 @@ def pose_callback(msg):
     # ctrl_pub.publish(cmd_msg)
 
     t_matrix = msg.pose
-    print(t_matrix.matrix)
 
     if not t_matrix:
         print("Finding April Tag!")
@@ -88,6 +87,10 @@ def pose_callback(msg):
 
         r13, r31, x_translation, z_translation = t_matrix.matrix[
             2], t_matrix.matrix[8], t_matrix.matrix[3], t_matrix.matrix[11]
+        print(f'r13: {r13}')
+        print(f'r31: {r31}')
+        print(f'x_trans: {x_translation}')
+        print(f'z_trans: {z_translation}')
         if z_translation > 0.05:
 
             if x_translation < -0.05:
