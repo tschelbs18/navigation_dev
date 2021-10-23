@@ -18,10 +18,10 @@ stop = 1.0
 def parse_args():
 
     parser = argparse.ArgumentParser(description='Inputs for JetBot')
-    parser.add_argument("--left_forward_speed", default=0.98)
-    parser.add_argument("--right_forward_speed", default=0.95)
-    parser.add_argument("--left_turn_speed", default=0.88)
-    parser.add_argument("--right_turn_speed", default=0.85)
+    parser.add_argument("--left_forward_speed", default=0.88)
+    parser.add_argument("--right_forward_speed", default=0.85)
+    parser.add_argument("--left_turn_speed", default=0.78)
+    parser.add_argument("--right_turn_speed", default=0.75)
     args = parser.parse_args()
     print(args)
     return args
@@ -29,7 +29,6 @@ def parse_args():
 
 def move_forward(distance, left_speed, right_speed, forward_rate=0.415):
     duration = int(round(distance/forward_rate * 10))
-    duration = 10
 
     for _ in range(duration):
 
@@ -43,7 +42,7 @@ def move_forward(distance, left_speed, right_speed, forward_rate=0.415):
     time.sleep(1.0)
 
 
-def right_turn(turn, left_speed, right_speed, turn_rate=3.02):
+def right_turn(turn, left_speed, right_speed, turn_rate=2.52):
     duration = int(round(turn/turn_rate * 10))
 
     for _ in range(duration):
@@ -81,11 +80,11 @@ def pose_callback(msg):
 
     t_matrix = msg.pose
 
-    if not t_matrix:
+    if len(t_matrix.matrix) == 0:
         print("Finding April Tag!")
         right_turn(15, args.left_turn_speed, args.right_turn_speed)
     else:
-
+        print("Matrix length = " + str(len(t_matrix.matrix)))
         r13, r31, x_translation, z_translation = t_matrix.matrix[
             2], t_matrix.matrix[8], t_matrix.matrix[3], t_matrix.matrix[11]
         print('r13: ' + str(r13))
