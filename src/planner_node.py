@@ -29,6 +29,7 @@ def parse_args():
 
 def move_forward(distance, left_speed, right_speed, forward_rate=0.415):
     duration = int(round(distance/forward_rate * 10))
+    duration = 10
 
     for _ in range(duration):
 
