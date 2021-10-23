@@ -19,8 +19,8 @@ def tag_callback(msg):
     april_tag_distance = 0.5
 
     if msg.detections:
-        print(msg.detections)
-        pose_msg.pose = msg.detections[0].matrix[:9]
+        # print(msg.detections)
+        pose_msg.pose = list(msg.detections[0].matrix[:9])
         pose_msg.pose[8] -= april_tag_distance
 
     else:
