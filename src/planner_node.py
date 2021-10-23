@@ -20,10 +20,10 @@ april_tag_distance = 0.5
 def parse_args():
 
     parser = argparse.ArgumentParser(description='Inputs for JetBot')
-    parser.add_argument("--left_forward_speed", default=0.88)
-    parser.add_argument("--right_forward_speed", default=0.85)
-    parser.add_argument("--left_turn_speed", default=0.78)
-    parser.add_argument("--right_turn_speed", default=0.75)
+    parser.add_argument("--left_forward_speed", default=0.93)
+    parser.add_argument("--right_forward_speed", default=0.90)
+    parser.add_argument("--left_turn_speed", default=0.83)
+    parser.add_argument("--right_turn_speed", default=0.8)
     args = parser.parse_args()
     print(args)
     return args
@@ -31,6 +31,7 @@ def parse_args():
 
 def move_forward(distance, left_speed, right_speed, forward_rate=0.415):
     duration = int(round(distance/forward_rate * 10))
+    duration = 1
 
     for _ in range(duration):
 
@@ -46,6 +47,7 @@ def move_forward(distance, left_speed, right_speed, forward_rate=0.415):
 
 def right_turn(turn, left_speed, right_speed, turn_rate=2.52):
     duration = int(round(turn/turn_rate * 10))
+    duration = 1
 
     for _ in range(duration):
 
@@ -62,6 +64,7 @@ def right_turn(turn, left_speed, right_speed, turn_rate=2.52):
 def left_turn(turn, left_speed, right_speed, turn_rate=1.87):
 
     duration = int(round(turn/turn_rate * 10))
+    duration = 1
 
     for _ in range(duration):
 
@@ -76,9 +79,6 @@ def left_turn(turn, left_speed, right_speed, turn_rate=1.87):
 
 
 def pose_callback(msg):
-
-    cmd_msg = Float32MultiArray()
-    # ctrl_pub.publish(cmd_msg)
 
     t_matrix = msg.pose
 
