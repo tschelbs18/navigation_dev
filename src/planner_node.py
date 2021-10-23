@@ -11,8 +11,8 @@ from navigation_dev.msg import Pose
 
 
 ctrl_pub = rospy.Publisher('/ctrl_cmd', Float32MultiArray, queue_size=2)
-move = 1.0
-stop = 0.0
+move = 0.0
+stop = 1.0
 
 
 def parse_args():
@@ -115,7 +115,7 @@ def pose_callback(msg):
             if r13 > 0.05:
                 left_turn(0.5, args.left_turn_speed, args.right_turn_speed)
             elif r13 < 0.05:
-                left_turn(0.5, args.left_turn_speed, args.right_turn_speed)
+                right_turn(0.5, args.left_turn_speed, args.right_turn_speed)
             else:
                 print('waypoint 1 reached!')
                 time.sleep(5.0)
