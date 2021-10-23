@@ -82,6 +82,7 @@ def pose_callback(msg):
     print(t_matrix.matrix)
 
     if not t_matrix:
+        print("Finding April Tag!")
         right_turn(15, args.left_turn_speed, args.right_turn_speed)
     else:
 
@@ -90,8 +91,10 @@ def pose_callback(msg):
         if z_translation > 0.05:
 
             if x_translation < -0.05:
+                print("Turning right!")
                 right_turn(0.5, args.left_turn_speed, args.right_turn_speed)
             elif x_translation > 0.05:
+                print("Turning left!")
                 left_turn(0.5, args.left_turn_speed, args.right_turn_speed)
             else:
                 if z_translation >= 0.2:
