@@ -18,10 +18,10 @@ stop = 1.0
 def parse_args():
 
     parser = argparse.ArgumentParser(description='Inputs for JetBot')
-    parser.add_argument("--left_forward_speed", default=0.88)
-    parser.add_argument("--right_forward_speed", default=0.85)
-    parser.add_argument("--left_turn_speed", default=0.78)
-    parser.add_argument("--right_turn_speed", default=0.75)
+    parser.add_argument("--left_forward_speed", default=0.93)
+    parser.add_argument("--right_forward_speed", default=0.90)
+    parser.add_argument("--left_turn_speed", default=0.83)
+    parser.add_argument("--right_turn_speed", default=0.8)
     args = parser.parse_args()
     print(args)
     return args
@@ -101,11 +101,11 @@ def pose_callback(msg):
                 left_turn(0.5, args.left_turn_speed, args.right_turn_speed)
             else:
                 if z_translation >= 0.2:
-                    print("Moving forward fast!")
+                    print("Moving forward")
                     move_forward(
                         z_translation/5, args.left_forward_speed, args.right_forward_speed)
                 else:
-                    print("Moving forward slow")
+                    print("Moving forward")
                     move_forward(
                         z_translation/2, args.left_forward_speed, args.right_forward_speed)
 
