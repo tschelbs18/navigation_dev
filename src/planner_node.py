@@ -33,7 +33,7 @@ def move_forward(distance, left_speed, right_speed, forward_rate=0.415):
     for _ in range(duration):
 
         msg = Float32MultiArray()
-        msg.data = [move, left_speed, right_speed]
+        msg.data = [move, -left_speed, -right_speed]
         ctrl_pub.publish(msg)
         time.sleep(0.1)
 
