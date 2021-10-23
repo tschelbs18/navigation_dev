@@ -11,17 +11,17 @@ from navigation_dev.msg import Pose
 
 
 ctrl_pub = rospy.Publisher('/ctrl_cmd', Float32MultiArray, queue_size=2)
-move = 1.0
-stop = 0.0
+move = 0.0
+stop = 1.0
 
 
 def parse_args():
 
     parser = argparse.ArgumentParser(description='Inputs for JetBot')
-    parser.add_argument("--left_forward_speed", default=0.98)
-    parser.add_argument("--right_forward_speed", default=0.95)
-    parser.add_argument("--left_turn_speed", default=0.88)
-    parser.add_argument("--right_turn_speed", default=0.85)
+    parser.add_argument("--left_forward_speed", default=0.88)
+    parser.add_argument("--right_forward_speed", default=0.85)
+    parser.add_argument("--left_turn_speed", default=0.78)
+    parser.add_argument("--right_turn_speed", default=0.75)
     args = parser.parse_args()
     print(args)
     return args
@@ -29,7 +29,6 @@ def parse_args():
 
 def move_forward(distance, left_speed, right_speed, forward_rate=0.415):
     duration = int(round(distance/forward_rate * 10))
-    duration = 10
 
     for _ in range(duration):
 
