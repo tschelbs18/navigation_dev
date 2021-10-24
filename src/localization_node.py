@@ -46,7 +46,7 @@ def tag_callback(msg):
 
         pose_msg.pose.matrix = []
 
-    time.sleep(0.3)
+    #time.sleep(0.3)
     pose_pub.publish(pose_msg)
 
 
