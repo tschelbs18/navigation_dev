@@ -37,7 +37,7 @@ def tag_callback(msg):
         
         orientation = -(matrix[2] * (np.pi/2))
         
-        pose_msg.pose.matrix = list(camera_pos) + [orientation]
+        pose_msg.pose.matrix = list(camera_pos) + [orientation] + [msg.ids[0]]
         
     else:
         

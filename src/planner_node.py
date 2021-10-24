@@ -14,6 +14,7 @@ from navigation_dev.msg import Pose
 ctrl_pub = rospy.Publisher('/ctrl_cmd', Float32MultiArray, queue_size=2)
 move = 0.0
 stop = 1.0
+waypoint = 0
 april_tag_distance = 0.5
 
 
@@ -82,7 +83,7 @@ def pose_callback(msg):
 
     t_matrix = msg.pose
 
-    if len(t_matrix.matrix) == 0:
+    if len(t_matrix.matrix) == 0 or t_matrix.matrix[4] != waypoint:
         print("Finding April Tag!")
         left_turn(0.2, args.left_turn_speed, args.right_turn_speed)
     else:
