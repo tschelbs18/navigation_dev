@@ -88,7 +88,7 @@ def pose_callback(msg):
         left_turn(0.2, args.left_turn_speed, args.right_turn_speed)
     else:
         print("Matrix length = " + str(len(t_matrix.matrix)))
-        x,y,z,orientation = t_matrix.matrix[0], t_matrix.matrix[1], t_matrix.matrix[2], t_matrix.matrix[3]
+        x, y, z, orientation = t_matrix.matrix[0], t_matrix.matrix[1], t_matrix.matrix[2], t_matrix.matrix[3]
         print('x: ' + str(x))
         print('z: ' + str(z))
         print('orientation: ' + str(orientation))
@@ -96,7 +96,7 @@ def pose_callback(msg):
             waypoint_reached = 0
 
             if x > 0 and orientation < 0 or x < 0 and orientation > 0:
-                
+
                 if z > april_tag_distance + 0.2:
                     print("Moving forward fast!")
                     move_forward(
@@ -105,45 +105,46 @@ def pose_callback(msg):
                     print("Moving forward slow")
                     move_forward(
                         (z-april_tag_distance)/2, args.left_forward_speed, args.right_forward_speed)
-                    
+
             elif x < 0 and orientation < 0:
-                
+
                 print("Turning left!")
                 left_turn(0.2, args.left_turn_speed, args.right_turn_speed)
-            
+
             elif x > 0 and orientation > 0:
-                
+
                 print("Turning right!")
                 right_turn(0.2, args.left_turn_speed, args.right_turn_speed)
-                
+
             else:
-                print("Unaccounted situation! Help! x = {}, z = {}, orientation = {}".format(x,z,orientation))
-            
+                print("Unaccounted situation! Help! x = {}, z = {}, orientation = {}".format(
+                    x, z, orientation))
+
         else:
-            
+
             if orientation > 0.1:
                 print("Turning right!")
                 right_turn(0.1, args.left_turn_speed, args.right_turn_speed)
-                
+
             elif orientation < -0.1:
                 print("Turning left!")
                 left_turn(0.5, args.left_turn_speed, args.right_turn_speed)
-                
+
             else:
                 if waypoint_reached == 0:
-                    print("Waypoint reached, current position is x = {}, z = {} with an error of {}".format(x,z,np.sqrt(x**2 + z**2)))
+                    print("Waypoint reached, current position is x = {}, z = {} with an error of {}".format(
+                        x, z, np.sqrt(x**2 + z**2)))
                     time.sleep(5.0)
                     waypoint_reached = 1
                 else:
                     print("Turning left!")
                     left_turn(0.3, args.left_turn_speed, args.right_turn_speed)
-                
-
 
 
 if __name__ == "__main__":
 
     args = parse_args()
     rospy.init_node('planner_node')
-    rospy.Subscriber("/current_pose", Pose, pose_callback)
+    # Could we change this to re-initialize our subscriber after doing some action? Clear out the queue?
+    rospy.Subscriber("/current_pose", Pose, pose_callback, queue_size=1)
     rospy.spin()
