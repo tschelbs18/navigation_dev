@@ -15,6 +15,7 @@ ctrl_pub = rospy.Publisher('/ctrl_cmd', Float32MultiArray, queue_size=2)
 move = 0.0
 stop = 1.0
 waypoint = 0
+waypoint_reached = 0
 april_tag_distance = 0.5
 
 
@@ -82,6 +83,8 @@ def left_turn(turn, left_speed, right_speed, turn_rate=1.87):
 def pose_callback(msg):
 
     t_matrix = msg.pose
+    global waypoint
+    global waypoint_reached
 
     if len(t_matrix.matrix) == 0 or t_matrix.matrix[4] != waypoint:
         print("Finding April Tag!")
@@ -131,15 +134,15 @@ def pose_callback(msg):
                 left_turn(0.5, args.left_turn_speed, args.right_turn_speed)
 
             else:
-                print("Waypoint reached, current position is x = {}, z = {} with an error of {}".format(
-                    x, z, np.sqrt(x**2 + z**2)))
-                time.sleep(5.0)
-                waypoint_reached = 1
-                '''
+                if waypoint_reached == 0:
+                    print("Waypoint reached, current position is x = {}, z = {} with an error of {}".format(
+                        x, z, np.sqrt(x**2 + z**2)))
+                    time.sleep(5.0)
+                    waypoint += 1
+                    waypoint_reached = 1
                 else:
                     print("Turning left!")
                     left_turn(0.3, args.left_turn_speed, args.right_turn_speed)
-                '''
 
 
 if __name__ == "__main__":
