@@ -33,7 +33,7 @@ def parse_args():
 
 def move_forward(distance, left_speed, right_speed, forward_rate=0.415):
     duration = int(round(distance/forward_rate * 10))
-    duration = 1
+    duration = 5
 
     for _ in range(duration):
 
@@ -95,9 +95,8 @@ def pose_callback(msg):
         print('x: ' + str(x))
         print('z: ' + str(z))
         print('orientation: ' + str(orientation))
-        if z > april_tag_distance + 0.05:
-            waypoint_reached = 0
-
+        waypoint_reached = 0
+        if z > april_tag_distance:
             if x > 0 and orientation < 0 or x < 0 and orientation > 0:
 
                 if z > april_tag_distance + 0.2:
@@ -131,7 +130,7 @@ def pose_callback(msg):
 
             elif orientation < -0.1:
                 print("Turning left!")
-                left_turn(0.5, args.left_turn_speed, args.right_turn_speed)
+                left_turn(0.1, args.left_turn_speed, args.right_turn_speed)
 
             else:
                 if waypoint_reached == 0:
