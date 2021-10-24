@@ -131,14 +131,15 @@ def pose_callback(msg):
                 left_turn(0.5, args.left_turn_speed, args.right_turn_speed)
 
             else:
-                if waypoint_reached == 0:
-                    print("Waypoint reached, current position is x = {}, z = {} with an error of {}".format(
-                        x, z, np.sqrt(x**2 + z**2)))
-                    time.sleep(5.0)
-                    waypoint_reached = 1
+                print("Waypoint reached, current position is x = {}, z = {} with an error of {}".format(
+                    x, z, np.sqrt(x**2 + z**2)))
+                time.sleep(5.0)
+                waypoint_reached = 1
+                '''
                 else:
                     print("Turning left!")
                     left_turn(0.3, args.left_turn_speed, args.right_turn_speed)
+                '''
 
 
 if __name__ == "__main__":
