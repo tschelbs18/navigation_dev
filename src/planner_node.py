@@ -33,6 +33,7 @@ def parse_args():
 
 
 def move_forward(duration, distance, left_speed, right_speed, forward_rate=0.415):
+    # Note for Hmwk2, we ignore distance and rate - move in small bursts of time instead
 
     for _ in range(duration):
 
@@ -47,6 +48,7 @@ def move_forward(duration, distance, left_speed, right_speed, forward_rate=0.415
 
 
 def right_turn(duration, turn, left_speed, right_speed, turn_rate=2.52):
+    # Note for Hmwk2, we ignore distance and rate - move in small bursts of time instead
 
     for _ in range(duration):
 
@@ -61,6 +63,7 @@ def right_turn(duration, turn, left_speed, right_speed, turn_rate=2.52):
 
 
 def left_turn(duration, turn, left_speed, right_speed, turn_rate=1.87):
+    # Note for Hmwk2, we ignore distance and rate - move in small bursts of time instead
 
     for _ in range(duration):
 
@@ -76,7 +79,7 @@ def left_turn(duration, turn, left_speed, right_speed, turn_rate=1.87):
 
 def pose_callback(msg):
 
-    # Assign global varibales that keep track of our progress
+    # Assign global variables that keep track of our progress
     t_matrix = msg.pose
     global waypoint
     global waypoint_reached
@@ -98,12 +101,13 @@ def pose_callback(msg):
         # Determine actions needed to reach waypoint
         if z > april_tag_distance:
             if x > 0 and orientation < 0 or x < 0 and orientation > 0:
-                # Move forward towards april tag
+                # Move forward towards april tag if more than 20cm away from waypoint
                 if z > april_tag_distance + 0.2:
                     print("Moving forward fast!")
                     move_forward(
                         3, (z-april_tag_distance)/5, args.left_forward_speed, args.right_forward_speed)
                 else:
+                    # If <20 cm from waypoint, move slow
                     print("Moving forward slow")
                     move_forward(
                         1, (z-april_tag_distance)/2, args.left_forward_speed, args.right_forward_speed)
@@ -114,7 +118,7 @@ def pose_callback(msg):
                 left_turn(1, 0.2, args.left_turn_speed, args.right_turn_speed)
 
             elif x > 0 and orientation > 0:
-            
+
                 # Align to april tag by turning right
                 print("Turning right!")
                 right_turn(1, 0.2, args.left_turn_speed, args.right_turn_speed)
@@ -124,7 +128,7 @@ def pose_callback(msg):
                     x, z, orientation))
 
         else:
-            
+
             # Turn to align with april tag
             if orientation > 0.1:
                 print("Turning right!")
@@ -136,7 +140,6 @@ def pose_callback(msg):
                 left_turn(1, 0.1, args.left_turn_speed, args.right_turn_speed)
 
             else:
-                '''if waypoint_reached == 0:'''
                 # Reached april tag.  Determine next waypoint
                 print("Waypoint reached, current position is x = {}, z = {} with an error of {}".format(
                     x, z, np.sqrt(x**2 + z**2)))
@@ -146,17 +149,12 @@ def pose_callback(msg):
                     waypoint = 0
                     lap_complete = 1
                 waypoint_reached = 1
-                '''
-                else:
-                    print("Turning left!")
-                    left_turn(1, 0.3, args.left_turn_speed, args.right_turn_speed)
-                '''
 
 
 if __name__ == "__main__":
 
     args = parse_args()
     rospy.init_node('planner_node')
-    # Could we change this to re-initialize our subscriber after doing some action? Clear out the queue?
+    # We set the queue size to 1 to only look at the latest image detection
     rospy.Subscriber("/current_pose", Pose, pose_callback, queue_size=1)
     rospy.spin()
