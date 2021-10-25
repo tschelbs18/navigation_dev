@@ -17,6 +17,7 @@ stop = 1.0
 waypoint = 0
 waypoint_reached = 0
 april_tag_distance = 0.5
+lap_complete = 0
 
 
 def parse_args():
@@ -31,9 +32,7 @@ def parse_args():
     return args
 
 
-def move_forward(distance, left_speed, right_speed, forward_rate=0.415):
-    duration = int(round(distance/forward_rate * 10))
-    duration = 3
+def move_forward(duration, distance, left_speed, right_speed, forward_rate=0.415):
 
     for _ in range(duration):
 
@@ -47,9 +46,7 @@ def move_forward(distance, left_speed, right_speed, forward_rate=0.415):
     time.sleep(1.0)
 
 
-def right_turn(turn, left_speed, right_speed, turn_rate=2.52):
-    duration = int(round(turn/turn_rate * 10))
-    duration = 1
+def right_turn(duration, turn, left_speed, right_speed, turn_rate=2.52):
 
     for _ in range(duration):
 
@@ -63,10 +60,7 @@ def right_turn(turn, left_speed, right_speed, turn_rate=2.52):
     time.sleep(1.0)
 
 
-def left_turn(turn, left_speed, right_speed, turn_rate=1.87):
-
-    duration = int(round(turn/turn_rate * 10))
-    duration = 1
+def left_turn(duration, turn, left_speed, right_speed, turn_rate=1.87):
 
     for _ in range(duration):
 
@@ -85,13 +79,15 @@ def pose_callback(msg):
     t_matrix = msg.pose
     global waypoint
     global waypoint_reached
+    global lap_complete
 
     if len(t_matrix.matrix) == 0 or t_matrix.matrix[4] != waypoint:
         print("Finding April Tag!")
-        left_turn(0.2, args.left_turn_speed, args.right_turn_speed)
+        left_turn(3, 0.2, args.left_turn_speed, args.right_turn_speed)
     else:
-        print("Matrix length = " + str(len(t_matrix.matrix)))
         x, y, z, orientation = t_matrix.matrix[0], t_matrix.matrix[1], t_matrix.matrix[2], t_matrix.matrix[3]
+        if lap_complete == 1:
+            z = april_tag_distance
         print('x: ' + str(x))
         print('z: ' + str(z))
         print('orientation: ' + str(orientation))
@@ -102,21 +98,21 @@ def pose_callback(msg):
                 if z > april_tag_distance + 0.2:
                     print("Moving forward fast!")
                     move_forward(
-                        (z-april_tag_distance)/5, args.left_forward_speed, args.right_forward_speed)
+                        3, (z-april_tag_distance)/5, args.left_forward_speed, args.right_forward_speed)
                 else:
                     print("Moving forward slow")
                     move_forward(
-                        (z-april_tag_distance)/2, args.left_forward_speed, args.right_forward_speed)
+                        1, (z-april_tag_distance)/2, args.left_forward_speed, args.right_forward_speed)
 
             elif x < 0 and orientation < 0:
 
                 print("Turning left!")
-                left_turn(0.2, args.left_turn_speed, args.right_turn_speed)
+                left_turn(1, 0.2, args.left_turn_speed, args.right_turn_speed)
 
             elif x > 0 and orientation > 0:
 
                 print("Turning right!")
-                right_turn(0.2, args.left_turn_speed, args.right_turn_speed)
+                right_turn(1, 0.2, args.left_turn_speed, args.right_turn_speed)
 
             else:
                 print("Unaccounted situation! Help! x = {}, z = {}, orientation = {}".format(
@@ -126,22 +122,27 @@ def pose_callback(msg):
 
             if orientation > 0.1:
                 print("Turning right!")
-                right_turn(0.1, args.left_turn_speed, args.right_turn_speed)
+                right_turn(1, 0.1, args.left_turn_speed, args.right_turn_speed)
 
             elif orientation < -0.1:
                 print("Turning left!")
-                left_turn(0.1, args.left_turn_speed, args.right_turn_speed)
+                left_turn(1, 0.1, args.left_turn_speed, args.right_turn_speed)
 
             else:
-                if waypoint_reached == 0:
-                    print("Waypoint reached, current position is x = {}, z = {} with an error of {}".format(
-                        x, z, np.sqrt(x**2 + z**2)))
-                    time.sleep(5.0)
-                    waypoint += 1
-                    waypoint_reached = 1
+                '''if waypoint_reached == 0:'''
+                print("Waypoint reached, current position is x = {}, z = {} with an error of {}".format(
+                    x, z, np.sqrt(x**2 + z**2)))
+                time.sleep(5.0)
+                waypoint += 1
+                if waypoint == 4:
+                    waypoint = 0
+                    lap_complete = 1
+                waypoint_reached = 1
+                '''
                 else:
                     print("Turning left!")
-                    left_turn(0.3, args.left_turn_speed, args.right_turn_speed)
+                    left_turn(1, 0.3, args.left_turn_speed, args.right_turn_speed)
+                '''
 
 
 if __name__ == "__main__":
