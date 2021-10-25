@@ -76,15 +76,18 @@ def left_turn(duration, turn, left_speed, right_speed, turn_rate=1.87):
 
 def pose_callback(msg):
 
+    # Assign global varibales that keep track of our progress
     t_matrix = msg.pose
     global waypoint
     global waypoint_reached
     global lap_complete
 
+    # Turn left until you find an april tag
     if len(t_matrix.matrix) == 0 or t_matrix.matrix[4] != waypoint:
         print("Finding April Tag!")
         left_turn(3, 0.2, args.left_turn_speed, args.right_turn_speed)
     else:
+        # Once found, determine position relative to april tag
         x, y, z, orientation = t_matrix.matrix[0], t_matrix.matrix[1], t_matrix.matrix[2], t_matrix.matrix[3]
         if lap_complete == 1:
             z = april_tag_distance
@@ -92,9 +95,10 @@ def pose_callback(msg):
         print('z: ' + str(z))
         print('orientation: ' + str(orientation))
         waypoint_reached = 0
+        # Determine actions needed to reach waypoint
         if z > april_tag_distance:
             if x > 0 and orientation < 0 or x < 0 and orientation > 0:
-
+                # Move forward towards april tag
                 if z > april_tag_distance + 0.2:
                     print("Moving forward fast!")
                     move_forward(
@@ -105,12 +109,13 @@ def pose_callback(msg):
                         1, (z-april_tag_distance)/2, args.left_forward_speed, args.right_forward_speed)
 
             elif x < 0 and orientation < 0:
-
+                # Align to april tag by turning left
                 print("Turning left!")
                 left_turn(1, 0.2, args.left_turn_speed, args.right_turn_speed)
 
             elif x > 0 and orientation > 0:
-
+            
+                # Align to april tag by turning right
                 print("Turning right!")
                 right_turn(1, 0.2, args.left_turn_speed, args.right_turn_speed)
 
@@ -119,17 +124,20 @@ def pose_callback(msg):
                     x, z, orientation))
 
         else:
-
+            
+            # Turn to align with april tag
             if orientation > 0.1:
                 print("Turning right!")
                 right_turn(1, 0.1, args.left_turn_speed, args.right_turn_speed)
 
+            # Turn to align with april tag
             elif orientation < -0.1:
                 print("Turning left!")
                 left_turn(1, 0.1, args.left_turn_speed, args.right_turn_speed)
 
             else:
                 '''if waypoint_reached == 0:'''
+                # Reached april tag.  Determine next waypoint
                 print("Waypoint reached, current position is x = {}, z = {} with an error of {}".format(
                     x, z, np.sqrt(x**2 + z**2)))
                 time.sleep(5.0)
