@@ -11,44 +11,72 @@ from navigation_dev.msg import Pose
 
 pose_pub = rospy.Publisher('/current_pose', Pose, queue_size=2)
 
+dt = 1
+
+# Initializes variables
+s = np.array([0,0,0])
+F = np.eye(s.shape[0])
+G = np.array([[dt*np.cos(s[2]),0],[dt*np.sin(s[2]),0],[0,dt]])
+H = np.array([[-np.cos(s[2]),-np.sin(s[2]),0],[np.sin(s[2]),-np.cos(s[2]),0]])
+sigma = 0.5*np.eye(s.shape[0])
+Q = 0.1*np.eye(s.shape[0])
+R = 0.1*np.eye(2)
+
+v_t = 1
+w_t = 0.2
+                 
+def mahalanobis_distance(s,f,R):
+    return np.sqrt(np.matmul(np.matmul(np.transpose(f-s),np.linalg.inv(R)),(f-s)))
+
+def update_kalman(s,f,H,sigma,R):
+    S = np.matmul(np.matmul(H,sigma),np.transpose(H)) + R
+    K = np.matmul(np.matmul(sigma,np.transpose(H)),np.linalg.inv(S))
+    s = s + np.matmul(K,f-np.matmul(H,s))
+    sigma = np.matmul(np.eye(s.shape[0])-np.matmul(K,H),sigma)
+
 
 def tag_callback(msg):
 
     pose_msg = Pose()
     pose_msg.header.stamp = msg.header.stamp
 
-    april_tag_distance = 0.5
-    camera_distance = 0.07
-
     if msg.ids:
-
-        # Get first 12 elements of detections which are rotation matrix and translation vector
-        matrix = list(msg.detections[0].matrix[:12])
+        
+        #Predict
+        G[0][0] = dt*np.cos(s[2])
+        G[1][0] = dt*np.sin(s[2])
+        d = [v_t,w_t]
+        s = np.matmul(F,s) + np.matmul(G,d)
+        sigma = np.matmul(np.matmul(F,sigma),np.transpose(F)) + Q
+        
+        for i in msg.detections:
+            
+            f = np.array([i[3],i[11]])
+            num_features = (s.shape[0]-3)/2
+            m_d = []
+            for j in range(num_features):
+                m_d.append(mahalanobis_distance(s[2*j+1:2*j+3],f,R))
+            
+            if m_d and np.min(m_d) < 3.5:
+                corresponding_feature = np.argmin(m_d)+1
+                H_new = H
+                H_new[0][2*corresponding_feature+1] = np.cos(s[2])
+                H_new[0][2*corresponding_feature+2] = np.sin(s[2])
+                H_new[1][2*corresponding_feature+1] = -np.sin(s[2])
+                H_new[1][2*corresponding_feature+2] = np.cos(s[2])
+                #Update
+                update_kalman(s,f,H_new,sigma,R)
+            else:
+                #Add new landmark
+                np.append(s,s[0]+f[0]*np.cos(s[2]),s[1]+f[1]*np.sin(s[2]))
+                F = np.eye(s.shape[0])
+                H = np.append(H,[[0,0],[0,0]],axis=1)
+                Q = 0.1*np.eye(s.shape[0])
    
-        # Get position of robot from the reference frame of an april tag
-        rotation_matrix = matrix[:3] + matrix[4:7] + matrix[8:11]
-        rotation_matrix = np.reshape(np.array(rotation_matrix), (3, 3))
-        rotation_matrix_transpose = np.transpose(rotation_matrix)
-
-        translation_vector = -1 * \
-            np.array([matrix[3]] + [matrix[7]] + [matrix[11]+camera_distance])
-
-        camera_pos = np.matmul(rotation_matrix_transpose, translation_vector)
-
-        # Format the matrix so that right is positive x, up is positive y (irrelevant), straight distance between robot and april tag is z
-        frame_fix = np.reshape(
-            np.array([-1, 0, 0, 0, -1, 0, 0, 0, -1]), (3, 3))
-        camera_pos = np.matmul(frame_fix, camera_pos)
-
-        # Retrive orientation where 0 is looking at april tag, positive is looking to the right of april tag
-        orientation = -(matrix[2] * (np.pi/2))
-
-        # Return position, orientation, and april tag id
-        pose_msg.pose.matrix = list(camera_pos) + [orientation] + [msg.ids[0]]
 
     else:
 
-        pose_msg.pose.matrix = []
+        pose_msg.pose.matrix = 
 
     #time.sleep(0.3)
     pose_pub.publish(pose_msg)
