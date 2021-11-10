@@ -15,6 +15,7 @@ dt = 1
 
 # Initializes variables
 path = "circle"
+# Set starting position based on path (circle or figure 8)
 if path == "circle":
     s = np.array([6, 4, 3.1415/2])
 else:
@@ -40,7 +41,7 @@ move = 1
 time.sleep(5)
 # This is how many movements it take to functionally create a circle, our strategy is to move in a 40 sided polygon, creating a circle
 if path == "circle":
-    trajectory = [[v_t, 0], [0, w_t]]*40
+    trajectory = [[v_t, 0], [0, w_t]]*80
 else:
     trajectory = [[v_t, 0], [0, w_t]] * 30 + \
         [[v_t, 0], [0, -w_t]] * 40 + [[v_t, 0], [0, w_t]] * 10
@@ -48,11 +49,14 @@ idx = 0
 
 
 def mahalanobis_distance(s, f, R, H):
+    # Distance calculation
     diff = f-np.matmul(H, s)
+    print("MD Diff: " + str(diff))
     return np.sqrt(np.matmul(np.matmul(np.transpose(diff), np.linalg.inv(R)), (diff)))
 
 
 def update_kalman(s, f, H, sigma, R):
+    # Update Kalman filter
     S = np.matmul(np.matmul(H, sigma), np.transpose(H)) + R
     K = np.matmul(np.matmul(sigma, np.transpose(H)), np.linalg.inv(S))
     s = s + np.matmul(K, f-np.matmul(H, s))
@@ -125,8 +129,8 @@ def tag_callback(msg):
             elif m_d and np.min(m_d) >= 3.5 or not m_d:
                 # Add new landmark
                 print("NEW LANDMARK FOUND")
-                s = np.append(s, [s[0]+f[0]*np.cos(s[2]),
-                                  s[1]+f[1]*np.sin(s[2])])
+                s = np.append(s, [s[0] + f[1] * np.cos(s[2])-f[0]*np.sin(s[2])],
+                              [s[1] + f[1]*np.sin(s[2])-f[0]*np.cos(s[2])])
                 F = np.eye(s.shape[0])
                 G = np.append(G, [[0, 0], [0, 0]], axis=0)
                 H = np.append(H, [[0, 0], [0, 0]], axis=1)
