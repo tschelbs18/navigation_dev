@@ -98,7 +98,7 @@ def tag_callback(msg):
                 H_temp[1][2*j+2] = np.cos(s[2])
                 m_d.append(mahalanobis_distance(s, f, R, H_temp))
 
-            print("Min M_D: " + str(np.min(m_d)))
+            print(np.min(m_d))
             if m_d and np.min(m_d) < 3.5:
                 corresponding_feature = np.argmin(m_d)+1
                 H_new = H
