@@ -29,7 +29,7 @@ w_t = 0.2
 move = 1
 
 time.sleep(5)
-circle_trajectory = [[v_t, 0], [0, w_t]]*10
+circle_trajectory = [[v_t, 0], [0, w_t]]*20
 circle_index = 0
 
 
