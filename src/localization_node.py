@@ -71,6 +71,7 @@ def tag_callback(msg):
         G[1][0] = dt*np.sin(s[2])
         # Predict
         s = np.matmul(F, s) + np.matmul(G, d)
+        print("s" + str(s))
         sigma = np.matmul(np.matmul(F, sigma), np.transpose(F)) + Q
 
         for i in msg.detections:
@@ -84,7 +85,7 @@ def tag_callback(msg):
                 H_temp[0][2*j+2] = np.sin(s[2])
                 H_temp[1][2*j+1] = -np.sin(s[2])
                 H_temp[1][2*j+2] = np.cos(s[2])
-                m_d.append(mahalanobis_distance(s[2*j+1:2*j+3], f, R, H_temp))
+                m_d.append(mahalanobis_distance(s, f, R, H_temp))
 
             if m_d and np.min(m_d) < 3.5:
                 corresponding_feature = np.argmin(m_d)+1
@@ -98,7 +99,7 @@ def tag_callback(msg):
             elif m_d and np.min(m_d) >= 3.5:
                 # Add new landmark
                 s = np.append(s, [s[0]+f[0]*np.cos(s[2]),
-                              s[1]+f[1]*np.sin(s[2])])
+                                  s[1]+f[1]*np.sin(s[2])])
                 F = np.eye(s.shape[0])
                 G = np.append(G, [[0, 0], [0, 0]], axis=0)
                 H = np.append(H, [[0, 0], [0, 0]], axis=1)
