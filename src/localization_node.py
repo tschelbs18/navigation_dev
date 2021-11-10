@@ -28,7 +28,8 @@ w_t = 0.2
 
 move = 1
 
-circle_trajectory = [[v_t, w_t]]*20
+circle_trajectory = [[v_t, 0], [0, w_t]]*10
+circle_index = 0
 
 
 def mahalanobis_distance(s, f, R, H):
@@ -52,15 +53,18 @@ def tag_callback(msg):
     global F
     global Q
     global H
+    global circle_index
 
     pose_msg = Pose()
     pose_msg.header.stamp = msg.header.stamp
     d = [v_t, w_t]
 
     if move == 1:
-        pose_msg.pose.matrix = d
-        pose_pub.publish(pose_msg)
+        if circle_index < len(circle_trajectory):
+            pose_msg.pose.matrix = circle_trajectory[circle_index]
+            pose_pub.publish(pose_msg)
         move = 0
+        circle_index += 1
         time.sleep(1)
 
     elif msg.ids:
