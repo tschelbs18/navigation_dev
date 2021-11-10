@@ -70,12 +70,6 @@ def tag_callback(msg):
         G[0][0] = dt*np.cos(s[2])
         G[1][0] = dt*np.sin(s[2])
         # Predict
-        s = np.matmul(F,s) + np.matmul(G,d)
-        sigma = np.matmul(np.matmul(F,sigma),np.transpose(F)) + Q
-        
-        for i in msg.detections.matrix:
-            
-            f = np.array([i[3],i[11]])
         s = np.matmul(F, s) + np.matmul(G, d)
         sigma = np.matmul(np.matmul(F, sigma), np.transpose(F)) + Q
 
@@ -100,7 +94,7 @@ def tag_callback(msg):
                 H_new[1][2*corresponding_feature+1] = -np.sin(s[2])
                 H_new[1][2*corresponding_feature+2] = np.cos(s[2])
                 # Update
-                update_kalman(s,f,H_new,sigma,R)
+                update_kalman(s, f, H_new, sigma, R)
             elif m_d and np.min(m_d) >= 3.5:
                 # Add new landmark
                 s = np.append(s, [s[0]+f[0]*np.cos(s[2]),
