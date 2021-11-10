@@ -24,6 +24,10 @@ R = 0.1*np.eye(2)
 
 v_t = 1
 w_t = 0.2
+
+move = 1
+
+circle_trajectory = [[v_t,w_t]]*20
                  
 def mahalanobis_distance(s,f,R):
     return np.sqrt(np.matmul(np.matmul(np.transpose(f-s),np.linalg.inv(R)),(f-s)))
@@ -37,15 +41,30 @@ def update_kalman(s,f,H,sigma,R):
 
 def tag_callback(msg):
 
+    global move
+    global s
+    global sigma
+    global F
+    global Q
+    global H
+    
     pose_msg = Pose()
     pose_msg.header.stamp = msg.header.stamp
+    d = [v_t,w_t]
+    
+    if move == 1:
+        pose_msg.pose.matrix = d
+        pose_pub.publish(pose_msg)
+        move = 0
+        time.sleep(1)
 
-    if msg.ids:
+    elif msg.ids:
         
-        #Predict
+        move = 1
+        # Update G with new theta
         G[0][0] = dt*np.cos(s[2])
         G[1][0] = dt*np.sin(s[2])
-        d = [v_t,w_t]
+        # Predict
         s = np.matmul(F,s) + np.matmul(G,d)
         sigma = np.matmul(np.matmul(F,sigma),np.transpose(F)) + Q
         
@@ -64,22 +83,19 @@ def tag_callback(msg):
                 H_new[0][2*corresponding_feature+2] = np.sin(s[2])
                 H_new[1][2*corresponding_feature+1] = -np.sin(s[2])
                 H_new[1][2*corresponding_feature+2] = np.cos(s[2])
-                #Update
+                # Update
                 update_kalman(s,f,H_new,sigma,R)
             else:
-                #Add new landmark
-                np.append(s,s[0]+f[0]*np.cos(s[2]),s[1]+f[1]*np.sin(s[2]))
+                # Add new landmark
+                s = np.append(s,s[0]+f[0]*np.cos(s[2]),s[1]+f[1]*np.sin(s[2]))
                 F = np.eye(s.shape[0])
+                G = np.append(G,[[0,0],[0,0]],axis=0)
                 H = np.append(H,[[0,0],[0,0]],axis=1)
                 Q = 0.1*np.eye(s.shape[0])
-   
 
-    else:
-
-        pose_msg.pose.matrix = 
 
     #time.sleep(0.3)
-    pose_pub.publish(pose_msg)
+    
 
 
 if __name__ == "__main__":
