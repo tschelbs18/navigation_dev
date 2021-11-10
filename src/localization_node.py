@@ -23,13 +23,15 @@ sigma = 0.5*np.eye(s.shape[0])
 Q = 0.1*np.eye(s.shape[0])
 R = 0.1*np.eye(2)
 
-v_t = 1.0 / 12 / .3
-w_t = 0.087 / .1
+# These are our calibrated distance and rotational velocities in ft / sec and radians / sec
+v_t = 1.5 / 12 / .3
+w_t = 0.015 / .1
 
 move = 1
 
 time.sleep(5)
-circle_trajectory = [[v_t, 0], [0, w_t]]*90
+# This is how many movements it take to functionally create a circle, our strategy is to move in a 40 sided polygon, creating a circle
+circle_trajectory = [[v_t, 0], [0, w_t]]*40
 circle_index = 0
 
 
@@ -114,6 +116,9 @@ def tag_callback(msg):
                 G = np.append(G, [[0, 0], [0, 0]], axis=0)
                 H = np.append(H, [[0, 0], [0, 0]], axis=1)
                 Q = 0.1*np.eye(s.shape[0])
+                sigma = np.append(sigma, np.zeros((2, sigma.shape[0])), axis=0)
+                sigma[-1][-1] = 0.5
+                sigma[-2][-2] = 0.5
         time.sleep(1)
     # time.sleep(0.3)
 
