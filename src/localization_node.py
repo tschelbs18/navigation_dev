@@ -29,8 +29,9 @@ move = 1
 
 circle_trajectory = [[v_t,w_t]]*20
                  
-def mahalanobis_distance(s,f,R):
-    return np.sqrt(np.matmul(np.matmul(np.transpose(f-s),np.linalg.inv(R)),(f-s)))
+def mahalanobis_distance(s,f,R,H):
+    diff = f-np.matmul(H,s)
+    return np.sqrt(np.matmul(np.matmul(np.transpose(diff),np.linalg.inv(R)),(diff)))
 
 def update_kalman(s,f,H,sigma,R):
     S = np.matmul(np.matmul(H,sigma),np.transpose(H)) + R
@@ -73,8 +74,13 @@ def tag_callback(msg):
             f = np.array([i[3],i[11]])
             num_features = (s.shape[0]-3)/2
             m_d = []
-            for j in range(num_features):
-                m_d.append(mahalanobis_distance(s[2*j+1:2*j+3],f,R))
+            for j in range(1,num_features+1):
+                H_temp = H
+                H_temp[0][2*j+1] = np.cos(s[2])
+                H_temp[0][2*j+2] = np.sin(s[2])
+                H_temp[1][2*j+1] = -np.sin(s[2])
+                H_temp[1][2*j+2] = np.cos(s[2])
+                m_d.append(mahalanobis_distance(s[2*j+1:2*j+3],f,R,H_temp))
             
             if m_d and np.min(m_d) < 3.5:
                 corresponding_feature = np.argmin(m_d)+1
