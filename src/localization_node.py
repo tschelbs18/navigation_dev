@@ -14,7 +14,11 @@ pose_pub = rospy.Publisher('/current_pose', Pose, queue_size=2)
 dt = 1
 
 # Initializes variables
-s = np.array([6, 4, 3.1415/2])
+path = "circle"
+if path == "circle":
+    s = np.array([6, 4, 3.1415/2])
+else:
+    s = np.array([5, 5, 3.1415/2])
 F = np.eye(s.shape[0])
 G = np.array([[dt*np.cos(s[2]), 0], [dt*np.sin(s[2]), 0], [0, dt]])
 H = np.array([[-np.cos(s[2]), -np.sin(s[2]), 0],
@@ -24,15 +28,23 @@ Q = 0.1*np.eye(s.shape[0])
 R = 0.1*np.eye(2)
 
 # These are our calibrated distance and rotational velocities in ft / sec and radians / sec
-v_t = 1.5 / 12 / .3
-w_t = 0.015 / .1
+if path == "circle":
+    v_t = 1.5 / 12 / .3
+    w_t = 0.015 / .1
+else:
+    v_t = 1.5 / 12 / .3
+    w_t = 0.015 / .1
 
 move = 1
 
 time.sleep(5)
 # This is how many movements it take to functionally create a circle, our strategy is to move in a 40 sided polygon, creating a circle
-circle_trajectory = [[v_t, 0], [0, w_t]]*40
-circle_index = 0
+if path == "circle":
+    trajectory = [[v_t, 0], [0, w_t]]*40
+else:
+    trajectory = [[v_t, 0], [0, w_t]] * 30 + \
+        [[v_t, 0], [0, -w_t]] * 40 + [[v_t, 0], [0, w_t]] * 10
+idx = 0
 
 
 def mahalanobis_distance(s, f, R, H):
@@ -56,22 +68,22 @@ def tag_callback(msg):
     global F
     global Q
     global H
-    global circle_index
+    global idx
 
     pose_msg = Pose()
     pose_msg.header.stamp = msg.header.stamp
     d = [v_t, w_t]
 
     if move == 1:
-        if circle_index < len(circle_trajectory):
-            pose_msg.pose.matrix = circle_trajectory[circle_index]
+        if idx < len(trajectory):
+            pose_msg.pose.matrix = trajectory[idx]
             pose_pub.publish(pose_msg)
-        elif circle_index == len(circle_trajectory):
+        elif idx == len(trajectory):
             fi = open("s_matrix.txt", "w")
             fi.write(str(s))
             fi.close()
         move = 0
-        circle_index += 1
+        idx += 1
         time.sleep(1)
 
     elif msg.ids:
@@ -87,7 +99,7 @@ def tag_callback(msg):
 
         for i in msg.detections:
 
-            f = np.array([i.matrix[3], i.matrix[11]])
+            f = np.array([i.matrix[3]*3.28, i.matrix[11]*3.28])
             print(f)
             num_features = (s.shape[0]-3)/2
             m_d = []

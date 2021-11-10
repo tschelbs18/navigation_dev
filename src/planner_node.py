@@ -80,9 +80,12 @@ def pose_callback(msg):
     if t_matrix[0] != 0:
         print("Moving forward")
         move_forward(3, 0, 0.88, .85)
-    else:
+    elif t_matrix[1] >= 0:
         print("Turning left")
         left_turn(2, 0, 0.88, 0.85)
+    elif t_matrix[1] <= 0:
+        print("Turning right")
+        right_turn(2, 0, 0.88, 0.85)
 
 
 if __name__ == "__main__":
