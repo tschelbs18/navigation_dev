@@ -123,7 +123,7 @@ def tag_callback(msg):
                 sigma = np.append(sigma, np.zeros((sigma.shape[0], 2)), axis=1)
                 sigma[-1][-1] = 0.5
                 sigma[-2][-2] = 0.5
-        time.sleep(1)
+    time.sleep(1)
     # time.sleep(0.3)
 
 
