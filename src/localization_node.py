@@ -129,8 +129,8 @@ def tag_callback(msg):
             elif m_d and np.min(m_d) >= 3.5 or not m_d:
                 # Add new landmark
                 print("NEW LANDMARK FOUND")
-                s = np.append(s, [s[0] + f[1] * np.cos(s[2])-f[0]*np.sin(s[2])],
-                              [s[1] + f[1]*np.sin(s[2])-f[0]*np.cos(s[2])])
+                s = np.append(s, [s[0] + f[1] * np.cos(s[2])-f[0]*np.sin(s[2]),
+                              s[1] + f[1]*np.sin(s[2])-f[0]*np.cos(s[2])])
                 F = np.eye(s.shape[0])
                 G = np.append(G, [[0, 0], [0, 0]], axis=0)
                 H = np.append(H, [[0, 0], [0, 0]], axis=1)
