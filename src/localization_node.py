@@ -82,7 +82,7 @@ def tag_callback(msg):
         G[1][0] = dt*np.sin(s[2])
         # Predict
         s = np.matmul(F, s) + np.matmul(G, d)
-        print("s" + str(s))
+        print("s:" + str(s))
         sigma = np.matmul(np.matmul(F, sigma), np.transpose(F)) + Q
 
         for i in msg.detections:
@@ -117,6 +117,7 @@ def tag_callback(msg):
                 H = np.append(H, [[0, 0], [0, 0]], axis=1)
                 Q = 0.1*np.eye(s.shape[0])
                 sigma = np.append(sigma, np.zeros((2, sigma.shape[0])), axis=0)
+                sigma = np.append(sigma, np.zeros((sigma.shape[0], 2)), axis=1)
                 sigma[-1][-1] = 0.5
                 sigma[-2][-2] = 0.5
         time.sleep(1)
