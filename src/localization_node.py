@@ -23,7 +23,7 @@ sigma = 0.5*np.eye(s.shape[0])
 Q = 0.1*np.eye(s.shape[0])
 R = 0.1*np.eye(2)
 
-v_t = 1 / 12 / .3
+v_t = 1.0 / 12 / .3
 w_t = 0.087 / .1
 
 move = 1
