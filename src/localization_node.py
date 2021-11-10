@@ -29,7 +29,7 @@ w_t = 0.2
 move = 1
 
 time.sleep(5)
-circle_trajectory = [[v_t, 0], [0, w_t]]*20
+circle_trajectory = [[v_t, 0], [0, w_t]]*80
 circle_index = 0
 
 
@@ -109,7 +109,7 @@ def tag_callback(msg):
                 G = np.append(G, [[0, 0], [0, 0]], axis=0)
                 H = np.append(H, [[0, 0], [0, 0]], axis=1)
                 Q = 0.1*np.eye(s.shape[0])
-
+        time.sleep(1)
     # time.sleep(0.3)
 
 
