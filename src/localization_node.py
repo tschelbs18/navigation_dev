@@ -103,8 +103,8 @@ def tag_callback(msg):
                 update_kalman(s,f,H_new,sigma,R)
             elif m_d and np.min(m_d) >= 3.5:
                 # Add new landmark
-                s = np.append(s, s[0]+f[0]*np.cos(s[2]),
-                              s[1]+f[1]*np.sin(s[2]))
+                s = np.append(s, [s[0]+f[0]*np.cos(s[2]),
+                              s[1]+f[1]*np.sin(s[2])])
                 F = np.eye(s.shape[0])
                 G = np.append(G, [[0, 0], [0, 0]], axis=0)
                 H = np.append(H, [[0, 0], [0, 0]], axis=1)
