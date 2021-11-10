@@ -76,6 +76,7 @@ def left_turn(duration, turn, left_speed, right_speed, turn_rate=1.87):
 def pose_callback(msg):
     # Make movements
     t_matrix = msg.pose.matrix
+    print(t_matrix)
     if t_matrix[0] != 0:
         print("Moving forward")
         move_forward(3, 0, 0.88, .85)
