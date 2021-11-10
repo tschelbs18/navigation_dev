@@ -23,13 +23,13 @@ sigma = 0.5*np.eye(s.shape[0])
 Q = 0.1*np.eye(s.shape[0])
 R = 0.1*np.eye(2)
 
-v_t = 1
-w_t = 0.2
+v_t = 1 / 12 / .3
+w_t = 0.087 / .1
 
 move = 1
 
 time.sleep(5)
-circle_trajectory = [[v_t, 0], [0, w_t]]*80
+circle_trajectory = [[v_t, 0], [0, w_t]]*90
 circle_index = 0
 
 
@@ -64,6 +64,10 @@ def tag_callback(msg):
         if circle_index < len(circle_trajectory):
             pose_msg.pose.matrix = circle_trajectory[circle_index]
             pose_pub.publish(pose_msg)
+        elif circle_index == len(circle_trajectory):
+            fi = open("s_matrix.txt", "w")
+            fi.write(str(s))
+            fi.close()
         move = 0
         circle_index += 1
         time.sleep(1)
@@ -101,8 +105,9 @@ def tag_callback(msg):
                 H_new[1][2*corresponding_feature+2] = np.cos(s[2])
                 # Update
                 update_kalman(s, f, H_new, sigma, R)
-            elif m_d and np.min(m_d) >= 3.5:
+            elif m_d and np.min(m_d) >= 3.5 or not m_d:
                 # Add new landmark
+                print("NEW LANDMARK FOUND")
                 s = np.append(s, [s[0]+f[0]*np.cos(s[2]),
                                   s[1]+f[1]*np.sin(s[2])])
                 F = np.eye(s.shape[0])
