@@ -14,7 +14,7 @@ pose_pub = rospy.Publisher('/current_pose', Pose, queue_size=2)
 dt = 1
 
 # Initializes variables
-s = np.array([0, 0, 0])
+s = np.array([6, 4, 3.1415/2])
 F = np.eye(s.shape[0])
 G = np.array([[dt*np.cos(s[2]), 0], [dt*np.sin(s[2]), 0], [0, dt]])
 H = np.array([[-np.cos(s[2]), -np.sin(s[2]), 0],
@@ -98,7 +98,8 @@ def tag_callback(msg):
                 H_temp[1][2*j+2] = np.cos(s[2])
                 m_d.append(mahalanobis_distance(s, f, R, H_temp))
 
-            print(np.min(m_d))
+            if m_d:
+                print("Min M_D: " + str(np.min(m_d)))
             if m_d and np.min(m_d) < 3.5:
                 corresponding_feature = np.argmin(m_d)+1
                 H_new = H
