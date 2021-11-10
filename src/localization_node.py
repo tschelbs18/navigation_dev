@@ -88,6 +88,7 @@ def tag_callback(msg):
         for i in msg.detections:
 
             f = np.array([i.matrix[3], i.matrix[11]])
+            print(f)
             num_features = (s.shape[0]-3)/2
             m_d = []
             for j in range(1, num_features+1):
