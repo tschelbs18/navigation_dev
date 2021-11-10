@@ -74,15 +74,12 @@ def left_turn(duration, turn, left_speed, right_speed, turn_rate=1.87):
 
 
 def pose_callback(msg):
-
-    # Assign global variables that keep track of our progress
+    # Make movements
     t_matrix = msg.pose.matrix
     if t_matrix[0] != 0:
-        move_forward(10)
+        move_forward(3, 0, 0.73, .7)
     else:
-        left_turn(3)
-        
-    
+        left_turn(2, 0, 0.83, 0.8)
 
 
 if __name__ == "__main__":
