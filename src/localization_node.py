@@ -136,7 +136,7 @@ def tag_callback(msg):
                 H_new[1][2*corresponding_feature+1] = -np.sin(s[2])
                 H_new[1][2*corresponding_feature+2] = np.cos(s[2])
                 # Update
-                s, sigma = update_kalman(s, f, H_new, sigma, R)
+                # s, sigma = update_kalman(s, f, H_new, sigma, R)
             elif m_d and np.min(m_d) >= md_threshold or not m_d:
                 # Add new landmark
                 print("NEW LANDMARK FOUND")
