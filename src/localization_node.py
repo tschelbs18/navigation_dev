@@ -111,7 +111,7 @@ def tag_callback(msg):
 
         for i in msg.detections:
 
-            md_threshold = 7
+            md_threshold = 20
             f = np.array([i.matrix[11]*3.28, i.matrix[3]*3.28])
             num_features = (s.shape[0]-3)/2
             m_d = []
