@@ -65,6 +65,7 @@ def update_kalman(s, f, H, sigma, R):
     K = np.matmul(np.matmul(sigma, np.transpose(H)), np.linalg.inv(S))
     s = s + np.matmul(K, f-np.matmul(H, s))
     sigma = np.matmul(np.eye(s.shape[0])-np.matmul(K, H), sigma)
+    return s, sigma
 
 
 def tag_callback(msg):
@@ -134,7 +135,7 @@ def tag_callback(msg):
                 H_new[1][2*corresponding_feature+1] = -np.sin(s[2])
                 H_new[1][2*corresponding_feature+2] = np.cos(s[2])
                 # Update
-                update_kalman(s, f, H_new, sigma, R)
+                s, sigma = update_kalman(s, f, H_new, sigma, R)
             elif m_d and np.min(m_d) >= md_threshold or not m_d:
                 # Add new landmark
                 print("NEW LANDMARK FOUND")
