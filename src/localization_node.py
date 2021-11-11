@@ -11,7 +11,7 @@ from navigation_dev.msg import Pose
 
 pose_pub = rospy.Publisher('/current_pose', Pose, queue_size=2)
 
-dt = 1
+dt = .3
 
 # Initializes variables
 path = "circle"
@@ -80,7 +80,7 @@ def tag_callback(msg):
 
     pose_msg = Pose()
     pose_msg.header.stamp = msg.header.stamp
-    d = [v_t, w_t]
+    d = trajectory[idx]
 
     if move == 1:
         if idx < len(trajectory):
@@ -100,6 +100,10 @@ def tag_callback(msg):
         # Update G with new theta
         G[0][0] = dt*np.cos(s[2])
         G[1][0] = dt*np.sin(s[2])
+        H[0][0] = -np.cos(s[2])
+        H[0][1] = -np.sin(s[2])
+        H[1][0] = np.sin(s[2])
+        H[1][1] = -np.cos(s[-2])
         # Predict
         s = np.matmul(F, s) + np.matmul(G, d)
         print("s:" + str(s))
