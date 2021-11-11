@@ -103,7 +103,7 @@ def tag_callback(msg):
         H[0][0] = -np.cos(s[2])
         H[0][1] = -np.sin(s[2])
         H[1][0] = np.sin(s[2])
-        H[1][1] = -np.cos(s[-2])
+        H[1][1] = -np.cos(s[2])
         # Predict
         s = np.matmul(F, s) + np.matmul(G, d)
         print("s:" + str(s))
