@@ -29,7 +29,7 @@ def parse_args():
 
 
 def move_forward(duration, distance, left_speed, right_speed, forward_rate=0.415):
-    # Note for Hmwk2, we ignore distance and rate - move in small bursts of time instead
+    # Note for Hmwk2 & 3, we ignore distance and rate - move in small bursts of time instead
 
     for _ in range(duration):
 
@@ -44,7 +44,7 @@ def move_forward(duration, distance, left_speed, right_speed, forward_rate=0.415
 
 
 def right_turn(duration, turn, left_speed, right_speed, turn_rate=2.52):
-    # Note for Hmwk2, we ignore distance and rate - move in small bursts of time instead
+    # Note for Hmwk2 & 3, we ignore distance and rate - move in small bursts of time instead
 
     for _ in range(duration):
 
@@ -59,7 +59,7 @@ def right_turn(duration, turn, left_speed, right_speed, turn_rate=2.52):
 
 
 def left_turn(duration, turn, left_speed, right_speed, turn_rate=1.87):
-    # Note for Hmwk2, we ignore distance and rate - move in small bursts of time instead
+    # Note for Hmwk2 & 3, we ignore distance and rate - move in small bursts of time instead
 
     for _ in range(duration):
 
@@ -74,7 +74,7 @@ def left_turn(duration, turn, left_speed, right_speed, turn_rate=1.87):
 
 
 def pose_callback(msg):
-    # Make movements
+    # Make movements based on the incoming matrix from the localization node
     t_matrix = msg.pose.matrix
     print(t_matrix)
     if t_matrix[0] != 0:
@@ -92,6 +92,6 @@ if __name__ == "__main__":
 
     args = parse_args()
     rospy.init_node('planner_node')
-    # We set the queue size to 1 to only look at the latest image detection
+    # We set the queue size to 1 to only look at the latest message
     rospy.Subscriber("/current_pose", Pose, pose_callback, queue_size=1)
     rospy.spin()

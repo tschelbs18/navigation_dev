@@ -14,7 +14,7 @@ pose_pub = rospy.Publisher('/current_pose', Pose, queue_size=2)
 dt = .3
 
 # Initializes variables
-path = "figure-8"
+path = "circle"
 # Set starting position based on path (circle or figure 8)
 if path == "circle":
     s = np.array([6, 4, 3.1415/2])
@@ -84,9 +84,11 @@ def tag_callback(msg):
     d = trajectory[idx]
 
     if move == 1:
+        # Iterate over trajectory and publish a turn or forward move
         if idx < len(trajectory):
             pose_msg.pose.matrix = trajectory[idx]
             pose_pub.publish(pose_msg)
+        # If the trajectory is complete, write resulting predictions to a file
         elif idx == len(trajectory):
             fi = open("s_matrix.txt", "w")
             fi.write(str(s))
@@ -136,7 +138,7 @@ def tag_callback(msg):
                 H_new[1][2*corresponding_feature+1] = -np.sin(s[2])
                 H_new[1][2*corresponding_feature+2] = np.cos(s[2])
                 # Update
-                # s, sigma = update_kalman(s, f, H_new, sigma, R)
+                s, sigma = update_kalman(s, f, H_new, sigma, R)
             elif m_d and np.min(m_d) >= md_threshold or not m_d:
                 # Add new landmark
                 print("NEW LANDMARK FOUND")
