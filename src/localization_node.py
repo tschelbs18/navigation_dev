@@ -31,10 +31,10 @@ R = 0.1*np.eye(2)
 # These are our calibrated distance and rotational velocities in ft / sec and radians / sec
 if path == "circle":
     v_t = 1.5 / 12 / .3
-    w_t = 0.015 / .1
+    w_t = 0.018 / .1
 else:
     v_t = 1.5 / 12 / .3
-    w_t = 0.015 / .1
+    w_t = 0.018 / .1
 
 move = 1
 
