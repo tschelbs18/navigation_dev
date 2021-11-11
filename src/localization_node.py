@@ -51,10 +51,10 @@ idx = 0
 def mahalanobis_distance(s, f, R, H):
     # Distance calculation
     diff = f-np.matmul(H, s)
-    print("f= " + str(f))
-    print("H= " + str(H))
-    print("s= " + str(s))
-    print("H*s= " + str((np.matmul(H, s))))
+    # print("f= " + str(f))
+    # print("H= " + str(H))
+    # print("s= " + str(s))
+    # print("H*s= " + str((np.matmul(H, s))))
     # print("MD Diff: " + str(diff))
     return np.sqrt(np.matmul(np.matmul(np.transpose(diff), np.linalg.inv(R)), (diff)))
 
