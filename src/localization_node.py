@@ -62,7 +62,9 @@ def mahalanobis_distance(s, f, R, H):
 def update_kalman(s, f, H, sigma, R):
     # Update Kalman filter
     S = np.matmul(np.matmul(H, sigma), np.transpose(H)) + R
+    # Kalman gain
     K = np.matmul(np.matmul(sigma, np.transpose(H)), np.linalg.inv(S))
+    # Update state and covariance
     s = s + np.matmul(K, f-np.matmul(H, s))
     sigma = np.matmul(np.eye(s.shape[0])-np.matmul(K, H), sigma)
     return s, sigma
@@ -100,7 +102,7 @@ def tag_callback(msg):
     elif msg.ids:
 
         move = 1
-        # Update G with new theta
+        # Update G and H with new theta
         G[0][0] = dt*np.cos(s[2])
         G[1][0] = dt*np.sin(s[2])
         H[0][0] = -np.cos(s[2])
@@ -115,6 +117,8 @@ def tag_callback(msg):
         for i in msg.detections:
 
             md_threshold = 6
+            
+            # Based on measurement and threshold, try and match landmarks
             f = np.array([i.matrix[11]*3.28, i.matrix[3]*3.28])
             num_features = (s.shape[0]-3)/2
             m_d = []
@@ -128,6 +132,8 @@ def tag_callback(msg):
 
             if m_d:
                 print("Min M_D: " + str(np.min(m_d)))
+                
+            # If landmark matched, update kalman filter
             if m_d and np.min(m_d) < md_threshold:
                 corresponding_feature = np.argmin(m_d)+1
                 print("UPDATING OLD LANDMARK FOUND: " +
@@ -139,6 +145,8 @@ def tag_callback(msg):
                 H_new[1][2*corresponding_feature+2] = np.cos(s[2])
                 # Update
                 s, sigma = update_kalman(s, f, H_new, sigma, R)
+                
+            # If landmark not matched, add new landmark and update variables
             elif m_d and np.min(m_d) >= md_threshold or not m_d:
                 # Add new landmark
                 print("NEW LANDMARK FOUND")
