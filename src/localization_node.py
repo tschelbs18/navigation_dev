@@ -112,11 +112,13 @@ def tag_callback(msg):
             num_features = (s.shape[0]-3)/2
             m_d = []
             for j in range(1, num_features+1):
+                print("Cos(s[2]: " + str(np.cos(s[2])))
                 H_temp = H
                 H_temp[0][2*j+1] = np.cos(s[2])
                 H_temp[0][2*j+2] = np.sin(s[2])
                 H_temp[1][2*j+1] = -np.sin(s[2])
                 H_temp[1][2*j+2] = np.cos(s[2])
+                print("H temp: " + str(H_temp))
                 m_d.append(mahalanobis_distance(s, f, R, H_temp))
 
             if m_d:
