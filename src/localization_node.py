@@ -111,6 +111,7 @@ def tag_callback(msg):
 
         for i in msg.detections:
 
+            md_threshold = 7
             f = np.array([i.matrix[11]*3.28, i.matrix[3]*3.28])
             num_features = (s.shape[0]-3)/2
             m_d = []
@@ -124,7 +125,7 @@ def tag_callback(msg):
 
             if m_d:
                 print("Min M_D: " + str(np.min(m_d)))
-            if m_d and np.min(m_d) < 3.5:
+            if m_d and np.min(m_d) < md_threshold:
                 corresponding_feature = np.argmin(m_d)+1
                 print("OLD LANDMARK FOUND: " + str(corresponding_feature))
                 H_new = np.copy(H)
@@ -134,7 +135,7 @@ def tag_callback(msg):
                 H_new[1][2*corresponding_feature+2] = np.cos(s[2])
                 # Update
                 update_kalman(s, f, H_new, sigma, R)
-            elif m_d and np.min(m_d) >= 3.5 or not m_d:
+            elif m_d and np.min(m_d) >= md_threshold or not m_d:
                 # Add new landmark
                 print("NEW LANDMARK FOUND")
                 s = np.append(s, [s[0] + f[0] * np.cos(s[2])-f[1]*np.sin(s[2]),
