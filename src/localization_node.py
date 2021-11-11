@@ -14,7 +14,7 @@ pose_pub = rospy.Publisher('/current_pose', Pose, queue_size=2)
 dt = .3
 
 # Initializes variables
-path = "circle"
+path = "figure-8"
 # Set starting position based on path (circle or figure 8)
 if path == "circle":
     s = np.array([6, 4, 3.1415/2])
@@ -41,10 +41,10 @@ move = 1
 time.sleep(5)
 # This is how many movements it take to functionally create a circle, our strategy is to move in a 40 sided polygon, creating a circle
 if path == "circle":
-    trajectory = [[v_t, 0], [0, w_t]]*80
+    trajectory = [[v_t, 0], [0, w_t]]*90
 else:
-    trajectory = [[v_t, 0], [0, w_t]] * 30 + \
-        [[v_t, 0], [0, -w_t]] * 40 + [[v_t, 0], [0, w_t]] * 10
+    trajectory = [[v_t, 0], [0, w_t]] * 35 + \
+        [[v_t, 0], [0, -w_t]] * 45 + [[v_t, 0], [0, w_t]] * 10
 idx = 0
 
 
