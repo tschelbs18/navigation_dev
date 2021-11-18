@@ -11,162 +11,50 @@ from navigation_dev.msg import Pose
 
 pose_pub = rospy.Publisher('/current_pose', Pose, queue_size=2)
 
-dt = .3
-
-# Initializes variables
-path = "circle"
-# Set starting position based on path (circle or figure 8)
-if path == "circle":
-    s = np.array([6, 4, 3.1415/2])
-else:
-    s = np.array([5, 5, 3.1415/2])
-F = np.eye(s.shape[0])
-G = np.array([[dt*np.cos(s[2]), 0], [dt*np.sin(s[2]), 0], [0, dt]])
-H = np.array([[-np.cos(s[2]), -np.sin(s[2]), 0],
-             [np.sin(s[2]), -np.cos(s[2]), 0]])
-sigma = 0.5*np.eye(s.shape[0])
-Q = 0.1*np.eye(s.shape[0])
-R = 0.1*np.eye(2)
-
-# These are our calibrated distance and rotational velocities in ft / sec and radians / sec
-if path == "circle":
-    v_t = 1.5 / 12 / .3
-    w_t = 0.018 / .1
-else:
-    v_t = 1.5 / 12 / .3
-    w_t = 0.018 / .1
-
-move = 1
-
-time.sleep(5)
-# This is how many movements it take to functionally create a circle, our strategy is to move in a 40 sided polygon, creating a circle
-if path == "circle":
-    trajectory = [[v_t, 0], [0, w_t]]*90
-else:
-    trajectory = [[v_t, 0], [0, w_t]] * 35 + \
-        [[v_t, 0], [0, -w_t]] * 45 + [[v_t, 0], [0, w_t]] * 10
-idx = 0
-
-
-def mahalanobis_distance(s, f, R, H):
-    # Distance calculation
-    diff = f-np.matmul(H, s)
-    # print("f= " + str(f))
-    # print("H= " + str(H))
-    # print("s= " + str(s))
-    # print("H*s= " + str((np.matmul(H, s))))
-    # print("MD Diff: " + str(diff))
-    return np.sqrt(np.matmul(np.matmul(np.transpose(diff), np.linalg.inv(R)), (diff)))
-
-
-def update_kalman(s, f, H, sigma, R):
-    # Update Kalman filter
-    S = np.matmul(np.matmul(H, sigma), np.transpose(H)) + R
-    # Kalman gain
-    K = np.matmul(np.matmul(sigma, np.transpose(H)), np.linalg.inv(S))
-    # Update state and covariance
-    s = s + np.matmul(K, f-np.matmul(H, s))
-    sigma = np.matmul(np.eye(s.shape[0])-np.matmul(K, H), sigma)
-    return s, sigma
-
 
 def tag_callback(msg):
 
-    global move
-    global s
-    global G
-    global sigma
-    global F
-    global Q
-    global H
-    global idx
-
     pose_msg = Pose()
     pose_msg.header.stamp = msg.header.stamp
-    d = trajectory[idx]
 
-    if move == 1:
-        # Iterate over trajectory and publish a turn or forward move
-        if idx < len(trajectory):
-            pose_msg.pose.matrix = trajectory[idx]
-            pose_pub.publish(pose_msg)
-        # If the trajectory is complete, write resulting predictions to a file
-        elif idx == len(trajectory):
-            fi = open("s_matrix.txt", "w")
-            fi.write(str(s))
-            fi.close()
-        move = 0
-        idx += 1
-        time.sleep(1)
+    camera_distance = 0.07
 
-    elif msg.ids:
+    if msg.ids:
 
-        move = 1
-        # Update G and H with new theta
-        G[0][0] = dt*np.cos(s[2])
-        G[1][0] = dt*np.sin(s[2])
-        H[0][0] = -np.cos(s[2])
-        H[0][1] = -np.sin(s[2])
-        H[1][0] = np.sin(s[2])
-        H[1][1] = -np.cos(s[2])
-        # Predict
-        s = np.matmul(F, s) + np.matmul(G, d)
-        print("s:" + str(s))
-        sigma = np.matmul(np.matmul(F, sigma), np.transpose(F)) + Q
+        # Get first 12 elements of detections which are rotation matrix and translation vector
+        # Note we are only looking at the first april tag detected - may want to consider more than 1
+        matrix = list(msg.detections[0].matrix[:12])
 
-        for i in msg.detections:
+        # Get position of robot from the reference frame of an april tag
+        rotation_matrix = matrix[:3] + matrix[4:7] + matrix[8:11]
+        rotation_matrix = np.reshape(np.array(rotation_matrix), (3, 3))
+        rotation_matrix_transpose = np.transpose(rotation_matrix)
 
-            md_threshold = 6
-            
-            # Based on measurement and threshold, try and match landmarks
-            f = np.array([i.matrix[11]*3.28, i.matrix[3]*3.28])
-            num_features = (s.shape[0]-3)/2
-            m_d = []
-            for j in range(1, num_features+1):
-                H_temp = np.copy(H)
-                H_temp[0][2*j+1] = np.cos(s[2])
-                H_temp[0][2*j+2] = np.sin(s[2])
-                H_temp[1][2*j+1] = -np.sin(s[2])
-                H_temp[1][2*j+2] = np.cos(s[2])
-                m_d.append(mahalanobis_distance(s, f, R, H_temp))
+        translation_vector = -1 * \
+            np.array([matrix[3]] + [matrix[7]] + [matrix[11]+camera_distance])
 
-            if m_d:
-                print("Min M_D: " + str(np.min(m_d)))
-                
-            # If landmark matched, update kalman filter
-            if m_d and np.min(m_d) < md_threshold:
-                corresponding_feature = np.argmin(m_d)+1
-                print("UPDATING OLD LANDMARK FOUND: " +
-                      str(corresponding_feature))
-                H_new = np.copy(H)
-                H_new[0][2*corresponding_feature+1] = np.cos(s[2])
-                H_new[0][2*corresponding_feature+2] = np.sin(s[2])
-                H_new[1][2*corresponding_feature+1] = -np.sin(s[2])
-                H_new[1][2*corresponding_feature+2] = np.cos(s[2])
-                # Update
-                s, sigma = update_kalman(s, f, H_new, sigma, R)
-                
-            # If landmark not matched, add new landmark and update variables
-            elif m_d and np.min(m_d) >= md_threshold or not m_d:
-                # Add new landmark
-                print("NEW LANDMARK FOUND")
-                s = np.append(s, [s[0] + f[0] * np.cos(s[2]) - f[1] * np.sin(s[2]),
-                                  s[1] + f[0] * np.sin(s[2]) - f[1] * np.cos(s[2])])
-                F = np.eye(s.shape[0])
-                G = np.append(G, [[0, 0], [0, 0]], axis=0)
-                H = np.append(H, [[0, 0], [0, 0]], axis=1)
-                Q = 0.1*np.eye(s.shape[0])
-                sigma = np.append(sigma, np.zeros(
-                    (2, sigma.shape[0])), axis=0)
-                sigma = np.append(sigma, np.zeros(
-                    (sigma.shape[0], 2)), axis=1)
-                sigma[-1][-1] = 0.5
-                sigma[-2][-2] = 0.5
-    time.sleep(1)
+        camera_pos = np.matmul(rotation_matrix_transpose, translation_vector)
+
+        # Format the matrix so that right is positive x, up is positive y (irrelevant), straight distance between robot and april tag is z
+        frame_fix = np.reshape(
+            np.array([-1, 0, 0, 0, -1, 0, 0, 0, -1]), (3, 3))
+        camera_pos = np.matmul(frame_fix, camera_pos)
+
+        # Retrive orientation where 0 is looking at april tag, positive is looking to the right of april tag
+        orientation = -(matrix[2] * (np.pi/2))
+
+        # Return position, orientation, and april tag id
+        pose_msg.pose.matrix = list(camera_pos) + [orientation] + [msg.ids[0]]
+
+    else:
+
+        pose_msg.pose.matrix = []
+
     # time.sleep(0.3)
+    pose_pub.publish(pose_msg)
 
 
 if __name__ == "__main__":
     rospy.init_node('localization_node')
-    rospy.Subscriber("/tag_poses", AprilDetections, tag_callback, queue_size=1)
+    rospy.Subscriber("/tag_poses", AprilDetections, tag_callback)
     rospy.spin()
