@@ -177,7 +177,7 @@ def pose_callback(msg):
     t_matrix = msg.pose
     global waypoints
 
-    # Turn right until you find an april tag (given layout of HW4, turning right is better)
+    # Turn right until you find an april tag (given layout of HW4, turning right should be better)
     if len(t_matrix.matrix) == 0:
         print("Finding an April Tag!")
         right_turn(3, args.left_turn_speed, args.right_turn_speed)
@@ -187,10 +187,10 @@ def pose_callback(msg):
             3.28084, t_matrix.matrix[2] * 3.28084, t_matrix.matrix[3]
         tag_id = t_matrix.matrix[4]
         print('x: ' + str(x))
-        print('z: ' + str(z))
+        print('y: ' + str(y))
         print('orientation: ' + str(orientation))
 
-        # Use ground truth of tag location
+        # Get ground truth of tag location
         tag_x = april_tag_map[tag_id][0]
         tag_y = april_tag_map[tag_id][1]
         tag_facing = april_tag_map[tag_id][2]
@@ -210,10 +210,9 @@ def pose_callback(msg):
         needed_turn = math.atan(move_y / move_x) - orientation
 
         # Determine actions needed to reach nearest voronoi point (if more than an inch away)
-        if e_dist(closest_v_pt, [x, y]) > 1:
+        if e_dist(closest_v_pt, [x, y]) > .083:
             if abs(needed_turn) < 0.1:
                 # Move forward towards next point
-                # If <20 cm from waypoint, move slow
                 print("Moving forward slow")
                 move_forward(
                     1, args.left_forward_speed, args.right_forward_speed)
