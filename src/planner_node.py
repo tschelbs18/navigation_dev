@@ -186,9 +186,6 @@ def pose_callback(msg):
         x, z, y, orientation = t_matrix.matrix[0] * 3.28084, t_matrix.matrix[1] * \
             3.28084, t_matrix.matrix[2] * 3.28084, t_matrix.matrix[3]
         tag_id = t_matrix.matrix[4]
-        print('x: ' + str(x))
-        print('y: ' + str(y))
-        print('orientation: ' + str(orientation))
 
         # Get ground truth of tag location
         tag_x = april_tag_map[tag_id][0]
@@ -198,6 +195,9 @@ def pose_callback(msg):
         # Using the tag, calculate our real x & y & orientation based on tag perception
         x, y, orientation = get_real_position(
             x, y, orientation, tag_x, tag_y, tag_facing)
+        print('x: ' + str(x))
+        print('y: ' + str(y))
+        print('orientation: ' + str(orientation))
 
         # Find closest voronoi point that is closer to the destination than the robot
         dest_dist = e_dist([x, y], waypoints[0])
