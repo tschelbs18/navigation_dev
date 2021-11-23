@@ -74,7 +74,7 @@ for x in range(20, 61):
             v_pts.append([x / 10.0, y / 10.0])
 
 v_pts = dedupe_vpts(v_pts)
-v_pts = [p for i, p in enumerate(v_pts) if i % 11 == 0]
+v_pts = [p for i, p in enumerate(v_pts) if i % 7 == 0]
 v_pts.remove([6.0, 1.9])
 v_pts.remove([2.0, 6.1])
 
