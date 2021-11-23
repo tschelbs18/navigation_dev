@@ -221,7 +221,7 @@ def pose_callback(msg):
                 # Move forward towards next point
                 print("Moving forward")
                 move_forward(
-                    2, args.left_forward_speed, args.right_forward_speed)
+                    3, args.left_forward_speed, args.right_forward_speed)
 
             elif needed_turn > 0:
                 # Align to next point by turning left
