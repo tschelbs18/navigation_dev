@@ -185,10 +185,13 @@ def pose_callback(msg):
     t_matrix = msg.pose
     global waypoints
 
+    # If waypoints all found, do nothing
+    if len(waypoints) == 0:
+        pass
     # Turn right until you find an april tag (given layout of HW4, turning right should be better)
-    if len(t_matrix.matrix) == 0:
+    elif len(t_matrix.matrix) == 0:
         print("Finding an April Tag!")
-        right_turn(2, args.left_turn_speed, args.right_turn_speed)
+        # right_turn(1, args.left_turn_speed, args.right_turn_speed)
     else:
         # Once found, determine position relative to april tag & convert to feet
         x, z, y, orientation = t_matrix.matrix[0] * 3.28084, t_matrix.matrix[1] * \
