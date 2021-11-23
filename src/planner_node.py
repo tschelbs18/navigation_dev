@@ -228,7 +228,7 @@ def pose_callback(msg):
         print("Needed turn: " + str(needed_turn))
 
         # Determine actions needed to reach nearest voronoi point (if more than an inch away)
-        if e_dist(closest_v_pt, [x, y]) > .083:
+        if e_dist(closest_v_pt, [x, y]) > .1:
             if abs(needed_turn) < 0.25:
                 # Move forward towards next point
                 print("Moving forward")
