@@ -18,12 +18,16 @@ def tag_callback(msg):
     pose_msg.header.stamp = msg.header.stamp
 
     camera_distance = 0.07
+    
+    if msg.ids:
+        x_min = [i.matrix[3] for i in msg.detections]
+        x_argmin = np.argmin(x_min)
 
     if msg.ids:
 
         # Get first 12 elements of detections which are rotation matrix and translation vector
         # Note we are only looking at the first april tag detected - may want to consider more than 1
-        matrix = list(msg.detections[0].matrix[:12])
+        matrix = list(msg.detections[x_argmin].matrix[:12])
 
         # Get position of robot from the reference frame of an april tag
         rotation_matrix = matrix[:3] + matrix[4:7] + matrix[8:11]
