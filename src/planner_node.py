@@ -77,6 +77,9 @@ v_pts = dedupe_vpts(v_pts)
 v_pts = [p for i, p in enumerate(v_pts) if i % 7 == 0]
 v_pts.remove([6.0, 1.9])
 v_pts.remove([2.0, 6.1])
+v_pts.remove([4.3, 6.2])
+v_pts.remove([3.6, 6.2])
+v_pts.append([4.0, 6.2])
 print(v_pts)
 
 ctrl_pub = rospy.Publisher('/ctrl_cmd', Float32MultiArray, queue_size=2)
@@ -204,7 +207,8 @@ def pose_callback(msg):
 
         # Find closest voronoi point that is closer to the destination than the robot
         dest_dist = e_dist([x, y], waypoints[0])
-        test_pts = [p for p in v_pts if e_dist(p, waypoints[0]) < dest_dist]
+        test_pts = [p for p in v_pts if e_dist(
+            p, waypoints[0]) < dest_dist - 0.5 or p == waypoints[0]]
         closest_v_pt = get_closest_pt([x, y], test_pts)
         print("Closest path point: " + str(closest_v_pt))
 
