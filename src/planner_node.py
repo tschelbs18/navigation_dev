@@ -74,6 +74,7 @@ for x in range(20, 61):
             v_pts.append([x / 10.0, y / 10.0])
 
 v_pts = dedupe_vpts(v_pts)
+v_pts = [p for i, p in enumerate(v_pts) if i % 5 == 0]
 
 ctrl_pub = rospy.Publisher('/ctrl_cmd', Float32MultiArray, queue_size=2)
 move = 0.0
@@ -99,8 +100,8 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Inputs for JetBot')
     parser.add_argument("--left_forward_speed", default=0.93)
     parser.add_argument("--right_forward_speed", default=0.90)
-    parser.add_argument("--left_turn_speed", default=0.88)
-    parser.add_argument("--right_turn_speed", default=0.85)
+    parser.add_argument("--left_turn_speed", default=0.83)
+    parser.add_argument("--right_turn_speed", default=0.80)
     args = parser.parse_args()
     print(args)
     return args
@@ -184,6 +185,7 @@ def pose_callback(msg):
         x, z, y, orientation = t_matrix.matrix[0] * 3.28084, t_matrix.matrix[1] * \
             3.28084, t_matrix.matrix[2] * 3.28084, t_matrix.matrix[3]
         tag_id = t_matrix.matrix[4]
+        print("Tag ID: " + str(tag_id))
 
         # Get ground truth of tag location
         tag_x = april_tag_map[tag_id][0]
@@ -207,7 +209,7 @@ def pose_callback(msg):
         move_x = closest_v_pt[0] - x
         move_y = closest_v_pt[1] - y
         print("Move x: " + str(move_x) + ", Move y: " + str(move_y))
-        needed_turn = math.atan(move_y / move_x) - orientation
+        needed_turn = orientation - math.atan(move_y / move_x)
         print("Needed turn: " + str(needed_turn))
 
         # Determine actions needed to reach nearest voronoi point (if more than an inch away)
