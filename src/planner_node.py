@@ -12,7 +12,7 @@ from navigation_dev.msg import AprilDetections
 from navigation_dev.msg import Pose
 
 
-# Code for ground truth of walls and obstacles
+# Code for ground truth of walls and obstacles and functions
 def e_dist(p1, p2):
     return ((p2[1] - p1[1])**2 + (p2[0] - p1[0])**2)**0.5
 
@@ -202,6 +202,7 @@ def pose_callback(msg):
         # Find closest voronoi point that is closer to the destination than the robot
         dest_dist = e_dist([x, y], waypoints[0])
         test_pts = [p for p in v_pts if e_dist(p, waypoints[0]) < dest_dist]
+        print("test points: " + str(test_pts))
         closest_v_pt = get_closest_pt([x, y], test_pts)
 
         # Given our v point destination, determine distance needed to move or turn
