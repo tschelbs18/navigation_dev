@@ -99,8 +99,8 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Inputs for JetBot')
     parser.add_argument("--left_forward_speed", default=0.93)
     parser.add_argument("--right_forward_speed", default=0.90)
-    parser.add_argument("--left_turn_speed", default=0.83)
-    parser.add_argument("--right_turn_speed", default=0.8)
+    parser.add_argument("--left_turn_speed", default=0.88)
+    parser.add_argument("--right_turn_speed", default=0.85)
     args = parser.parse_args()
     print(args)
     return args
@@ -177,7 +177,7 @@ def pose_callback(msg):
     # Turn right until you find an april tag (given layout of HW4, turning right should be better)
     if len(t_matrix.matrix) == 0:
         print("Finding an April Tag!")
-        right_turn(3, args.left_turn_speed, args.right_turn_speed)
+        right_turn(2, args.left_turn_speed, args.right_turn_speed)
     else:
         # Once found, determine position relative to april tag & convert to feet
         x, z, y, orientation = t_matrix.matrix[0] * 3.28084, t_matrix.matrix[1] * \
@@ -200,6 +200,7 @@ def pose_callback(msg):
         dest_dist = e_dist([x, y], waypoints[0])
         test_pts = [p for p in v_pts if e_dist(p, waypoints[0]) < dest_dist]
         closest_v_pt = get_closest_pt([x, y], test_pts)
+        print("Closest path point: " + str(closest_v_pt))
 
         # Given our v point destination, determine distance needed to move or turn
         move_x = closest_v_pt[0] - x
