@@ -217,6 +217,11 @@ def pose_callback(msg):
         move_y = closest_v_pt[1] - y
         print("Move x: " + str(move_x) + ", Move y: " + str(move_y))
         needed_turn = math.atan2(move_y, move_x) - orientation
+        # Ensure we don't unncessarily turn in one direction
+        if needed_turn >= math.pi:
+            needed_turn = -2 * math.pi + needed_turn
+        elif needed_turn <= -1 * math.pi:
+            needed_turn = 2 * math.pi + needed_turn
         print("Needed turn: " + str(needed_turn))
 
         # Determine actions needed to reach nearest voronoi point (if more than an inch away)
