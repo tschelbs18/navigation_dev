@@ -13,10 +13,12 @@ from navigation_dev.msg import Pose
 
 
 # Code for ground truth of walls and obstacles and functions
+# Euclidean Distance
 def e_dist(p1, p2):
     return ((p2[1] - p1[1])**2 + (p2[0] - p1[0])**2)**0.5
 
 
+# Find the closest point in a set of points relative to a given point
 def get_closest_pt(p1, point_set):
     min_dist = 10000000000000000
     for p2 in point_set:
@@ -27,6 +29,7 @@ def get_closest_pt(p1, point_set):
     return closest
 
 
+# Check if a point is a voronoi point, equidistant from the obstacle and the boundary
 def v_check(p, obstacles, boundaries):
     if abs(e_dist(p, get_closest_pt(p, obstacles)) - e_dist(p, get_closest_pt(p, boundaries))) <= 0.11:
         return True
@@ -34,6 +37,7 @@ def v_check(p, obstacles, boundaries):
         return False
 
 
+# Reduce Density of resulting voronoi points
 def dedupe_vpts(v_pts):
     deduped = []
     for pt in v_pts:
@@ -44,11 +48,13 @@ def dedupe_vpts(v_pts):
     return deduped
 
 
+# Initialize Walls of boundary points
 l_wall = [[0.0, y / 10.0] for y in range(0, 81)]
 r_wall = [[8.0, y / 10.0] for y in range(0, 81)]
 t_wall = [[x / 10.0, 8.0] for x in range(0, 81)]
 b_wall = [[x / 10.0, 0.0] for x in range(0, 81)]
 
+# Initialize Walls of obstacle points
 l_o_wall = [[3.0, y / 10.0] for y in range(35, 46)]
 r_o_wall = [[5.0, y / 10.0] for y in range(35, 46)]
 t_o_wall = [[x / 10.0, 4.5] for x in range(30, 51)]
@@ -56,6 +62,7 @@ b_o_wall = [[x / 10.0, 3.5] for x in range(30, 51)]
 obstacle_walls = l_o_wall + r_o_wall + t_o_wall + b_o_wall
 walls = l_wall + r_wall + t_wall + b_wall
 
+# Build out a set of voronoi points
 v_pts = []
 for y in range(10, 71):
     for x in range(10, 21):
@@ -73,8 +80,10 @@ for x in range(20, 61):
         if v_check([x / 10.0, y / 10.0], obstacle_walls, walls):
             v_pts.append([x / 10.0, y / 10.0])
 
+# Reduce density of found points by deduplicating very similar ones and random others
 v_pts = dedupe_vpts(v_pts)
 v_pts = [p for i, p in enumerate(v_pts) if i % 7 == 0]
+# Remove points near the waypoints and ensure the waypoints are voronoi points
 v_pts.remove([6.0, 1.9])
 v_pts.remove([2.0, 6.1])
 v_pts.remove([4.3, 6.2])
@@ -85,6 +94,7 @@ v_pts.append([4.0, 6.2])
 v_pts.append([1.5, 4.0])
 print(v_pts)
 
+# Initialize publisher, map of april tags, and waypoints
 ctrl_pub = rospy.Publisher('/ctrl_cmd', Float32MultiArray, queue_size=2)
 move = 0.0
 stop = 1.0
@@ -105,7 +115,7 @@ waypoints = [[4.0, 6.2], [1.5, 4.0]]
 
 
 def parse_args():
-
+    # Parse default inputs for speed
     parser = argparse.ArgumentParser(description='Inputs for JetBot')
     parser.add_argument("--left_forward_speed", default=0.93)
     parser.add_argument("--right_forward_speed", default=0.90)
@@ -117,7 +127,7 @@ def parse_args():
 
 
 def move_forward(duration, left_speed, right_speed):
-
+    # Code for moving forward
     for _ in range(duration):
 
         msg = Float32MultiArray()
@@ -131,7 +141,7 @@ def move_forward(duration, left_speed, right_speed):
 
 
 def right_turn(duration, left_speed, right_speed):
-
+    # Code for turning right
     for _ in range(duration):
 
         msg = Float32MultiArray()
@@ -145,7 +155,7 @@ def right_turn(duration, left_speed, right_speed):
 
 
 def left_turn(duration, left_speed, right_speed):
-
+    # Code for turning left
     for _ in range(duration):
 
         msg = Float32MultiArray()
@@ -158,7 +168,9 @@ def left_turn(duration, left_speed, right_speed):
     time.sleep(1.0)
 
 
+# Get the real position of the robot in the [0,0] - [8,8] coordinate plane
 def get_real_position(x, y, orientation, tag_x, tag_y, tag_facing):
+    # Based on the tags relative orientation, find robot's x, y, and orientation in radians
     if tag_facing == "down":
         real_x = tag_x - x
         real_y = tag_y - y
@@ -175,7 +187,6 @@ def get_real_position(x, y, orientation, tag_x, tag_y, tag_facing):
         real_x = tag_x - y
         real_y = tag_y + x
         real_orientation = 0.0 + orientation
-    # Need to cap orientation at [-2pi, 2pi]?
     return real_x, real_y, real_orientation
 
 
@@ -211,7 +222,7 @@ def pose_callback(msg):
         print('y: ' + str(y))
         print('orientation: ' + str(orientation))
 
-        # Find closest voronoi point that is closer to the destination than the robot
+        # Find next closest voronoi point that is closer to the destination than the robot
         dest_dist = e_dist([x, y], waypoints[0])
         test_pts = [p for p in v_pts if e_dist(
             p, waypoints[0]) < dest_dist - 0.5 or p == waypoints[0]]
@@ -230,7 +241,7 @@ def pose_callback(msg):
             needed_turn = 2 * math.pi + needed_turn
         print("Needed turn: " + str(needed_turn))
 
-        # Determine actions needed to reach nearest voronoi point (if more than an inch away)
+        # Determine actions needed to reach nearest voronoi point (if more than .1 feet away)
         if e_dist(closest_v_pt, [x, y]) > .1:
             if abs(needed_turn) < 0.25:
                 # Move forward towards next point

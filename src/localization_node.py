@@ -20,13 +20,11 @@ def tag_callback(msg):
     camera_distance = 0.07
 
     if msg.ids:
-        x_min = [abs(i.matrix[3]) for i in msg.detections]
-        x_argmin = np.argmin(x_min)
-
-    if msg.ids:
 
         # Get first 12 elements of detections which are rotation matrix and translation vector
-        # Note we are only looking at the first april tag detected - may want to consider more than 1
+        # Note we only consider the april tag found with the lowest relative orientation, to avoid confusion
+        x_min = [abs(i.matrix[3]) for i in msg.detections]
+        x_argmin = np.argmin(x_min)
         matrix = list(msg.detections[x_argmin].matrix[:12])
 
         # Get position of robot from the reference frame of an april tag
