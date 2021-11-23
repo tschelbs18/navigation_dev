@@ -79,7 +79,10 @@ v_pts.remove([6.0, 1.9])
 v_pts.remove([2.0, 6.1])
 v_pts.remove([4.3, 6.2])
 v_pts.remove([3.6, 6.2])
+v_pts.remove([1.5, 3.8])
+v_pts.remove([1.5, 4.5])
 v_pts.append([4.0, 6.2])
+v_pts.append([1.5, 4.0])
 print(v_pts)
 
 ctrl_pub = rospy.Publisher('/ctrl_cmd', Float32MultiArray, queue_size=2)
@@ -98,7 +101,7 @@ april_tag_map = {
     9: [8.0, 1.5, "left"],
     10: [8.0, 4.0, "left"],
     11: [8.0, 6.5, "left"]}
-waypoints = [[4.0, 6.2], [1.5, 4.5]]
+waypoints = [[4.0, 6.2], [1.5, 4.0]]
 
 
 def parse_args():
