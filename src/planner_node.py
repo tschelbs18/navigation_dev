@@ -75,9 +75,8 @@ for x in range(20, 61):
 
 v_pts = dedupe_vpts(v_pts)
 v_pts = [p for i, p in enumerate(v_pts) if i % 11 == 0]
-v_pts.remove([1.5, 3.0])
-v_pts.remove([1.9, 6.1])
-v_pts.remove([6.1, 2.0])
+v_pts.remove([6.0, 1.9])
+v_pts.remove([2.0, 6.1])
 
 ctrl_pub = rospy.Publisher('/ctrl_cmd', Float32MultiArray, queue_size=2)
 move = 0.0
