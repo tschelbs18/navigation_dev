@@ -202,6 +202,7 @@ def pose_callback(msg):
         # Find closest voronoi point that is closer to the destination than the robot
         dest_dist = e_dist([x, y], waypoints[0])
         test_pts = [p for p in v_pts if e_dist(p, waypoints[0]) < dest_dist]
+        print("v points: " + str(v_pts))
         print("test points: " + str(test_pts))
         closest_v_pt = get_closest_pt([x, y], test_pts)
 
