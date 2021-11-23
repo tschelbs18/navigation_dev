@@ -165,7 +165,7 @@ def get_real_position(x, y, orientation, tag_x, tag_y, tag_facing):
     elif tag_facing == "left":
         real_x = tag_x - y
         real_y = tag_y + x
-        real_orientation = -1*orientation
+        real_orientation = orientation
     # Need to cap orientation at [-2pi, 2pi]?
     return real_x, real_y, real_orientation
 
@@ -209,7 +209,7 @@ def pose_callback(msg):
         move_x = closest_v_pt[0] - x
         move_y = closest_v_pt[1] - y
         print("Move x: " + str(move_x) + ", Move y: " + str(move_y))
-        needed_turn = orientation - math.atan(move_y / move_x)
+        needed_turn = math.atan(move_y / move_x) - orientation
         print("Needed turn: " + str(needed_turn))
 
         # Determine actions needed to reach nearest voronoi point (if more than an inch away)
