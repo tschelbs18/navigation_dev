@@ -44,34 +44,34 @@ def dedupe_vpts(v_pts):
     return deduped
 
 
-l_wall = [[0, y / 10] for y in range(0, 81)]
-r_wall = [[8, y / 10] for y in range(0, 81)]
-t_wall = [[x / 10, 8] for x in range(0, 81)]
-b_wall = [[x / 10, 0] for x in range(0, 81)]
+l_wall = [[0.0, y / 10.0] for y in range(0, 81)]
+r_wall = [[8.0, y / 10.0] for y in range(0, 81)]
+t_wall = [[x / 10.0, 8.0] for x in range(0, 81)]
+b_wall = [[x / 10.0, 0.0] for x in range(0, 81)]
 
-l_o_wall = [[3, y / 10] for y in range(35, 46)]
-r_o_wall = [[5, y / 10] for y in range(35, 46)]
-t_o_wall = [[x / 10, 4.5] for x in range(30, 51)]
-b_o_wall = [[x / 10, 3.5] for x in range(30, 51)]
+l_o_wall = [[3.0, y / 10.0] for y in range(35, 46)]
+r_o_wall = [[5.0, y / 10.0] for y in range(35, 46)]
+t_o_wall = [[x / 10.0, 4.5] for x in range(30, 51)]
+b_o_wall = [[x / 10.0, 3.5] for x in range(30, 51)]
 obstacle_walls = l_o_wall + r_o_wall + t_o_wall + b_o_wall
 walls = l_wall + r_wall + t_wall + b_wall
 
 v_pts = []
 for y in range(10, 71):
     for x in range(10, 21):
-        if v_check([x / 10, y / 10], obstacle_walls, walls):
-            v_pts.append([x / 10, y / 10])
+        if v_check([x / 10.0, y / 10.0], obstacle_walls, walls):
+            v_pts.append([x / 10.0, y / 10.0])
     for x in range(60, 71):
-        if v_check([x / 10, y / 10], obstacle_walls, walls):
-            v_pts.append([x / 10, y / 10])
+        if v_check([x / 10.0, y / 10.0], obstacle_walls, walls):
+            v_pts.append([x / 10.0, y / 10.0])
 
 for x in range(20, 61):
     for y in range(50, 71):
-        if v_check([x / 10, y / 10], obstacle_walls, walls):
-            v_pts.append([x / 10, y / 10])
+        if v_check([x / 10.0, y / 10.0], obstacle_walls, walls):
+            v_pts.append([x / 10.0, y / 10.0])
     for y in range(10, 31):
-        if v_check([x / 10, y / 10], obstacle_walls, walls):
-            v_pts.append([x / 10, y / 10])
+        if v_check([x / 10.0, y / 10.0], obstacle_walls, walls):
+            v_pts.append([x / 10.0, y / 10.0])
 
 v_pts = dedupe_vpts(v_pts)
 
@@ -92,9 +92,6 @@ april_tag_map = {
     10: [8.0, 4.0, "left"],
     11: [8.0, 6.5, "left"]}
 waypoints = [[4.0, 6.2], [1.5, 4.5]]
-waypoint_reached = 0
-april_tag_distance = 0.5
-lap_complete = 0
 
 
 def parse_args():
