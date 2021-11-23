@@ -20,7 +20,7 @@ def tag_callback(msg):
     camera_distance = 0.07
 
     if msg.ids:
-        x_min = [i.matrix[3] for i in msg.detections]
+        x_min = [abs(i.matrix[3]) for i in msg.detections]
         x_argmin = np.argmin(x_min)
 
     if msg.ids:
