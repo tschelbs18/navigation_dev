@@ -74,7 +74,10 @@ for x in range(20, 61):
             v_pts.append([x / 10.0, y / 10.0])
 
 v_pts = dedupe_vpts(v_pts)
-v_pts = [p for i, p in enumerate(v_pts) if i % 5 == 0]
+v_pts = [p for i, p in enumerate(v_pts) if i % 11 == 0]
+v_pts.remove([1.5, 3.0])
+v_pts.remove([1.9, 6.1])
+v_pts.remove([6.1, 2.0])
 
 ctrl_pub = rospy.Publisher('/ctrl_cmd', Float32MultiArray, queue_size=2)
 move = 0.0
@@ -216,9 +219,9 @@ def pose_callback(msg):
         if e_dist(closest_v_pt, [x, y]) > .083:
             if abs(needed_turn) < 0.1:
                 # Move forward towards next point
-                print("Moving forward slow")
+                print("Moving forward")
                 move_forward(
-                    1, args.left_forward_speed, args.right_forward_speed)
+                    2, args.left_forward_speed, args.right_forward_speed)
 
             elif needed_turn > 0:
                 # Align to next point by turning left
