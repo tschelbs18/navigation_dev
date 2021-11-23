@@ -152,19 +152,20 @@ def get_real_position(x, y, orientation, tag_x, tag_y, tag_facing):
     if tag_facing == "down":
         real_x = tag_x - x
         real_y = tag_y - y
-        real_orientation = 3.1415 / 2 - orientation
+        real_orientation = (3.1415 / 2) + orientation
     elif tag_facing == "right":
         real_x = tag_x + y
         real_y = tag_y - x
-        real_orientation = 3.1415 - orientation
+        real_orientation = 3.1415 + orientation
     elif tag_facing == "up":
         real_x = tag_x + x
         real_y = tag_y + y
-        real_orientation = 3.1415 * 3 / 2 - orientation
+        real_orientation = (3.1415 * 3 / 2) + orientation
     elif tag_facing == "left":
         real_x = tag_x - y
         real_y = tag_y + x
-        real_orientation = -1 * orientation
+        real_orientation = orientation
+    # Need to cap orientation at [-2pi, 2pi]?
     return real_x, real_y, real_orientation
 
 
