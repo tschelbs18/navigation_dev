@@ -18,7 +18,7 @@ def tag_callback(msg):
     pose_msg.header.stamp = msg.header.stamp
 
     camera_distance = 0.07
-    
+
     if msg.ids:
         x_min = [i.matrix[3] for i in msg.detections]
         x_argmin = np.argmin(x_min)
@@ -48,7 +48,8 @@ def tag_callback(msg):
         orientation = -(matrix[2] * (np.pi/2))
 
         # Return position, orientation, and april tag id
-        pose_msg.pose.matrix = list(camera_pos) + [orientation] + [msg.ids[0]]
+        pose_msg.pose.matrix = list(camera_pos) + \
+            [orientation] + [msg.ids[x_argmin]]
 
     else:
 
