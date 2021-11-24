@@ -81,6 +81,7 @@ for x in range(20, 61):
             v_pts.append([x / 10.0, y / 10.0])
 
 # Reduce density of found points by deduplicating very similar ones and random others
+'''
 v_pts = dedupe_vpts(v_pts)
 v_pts = [p for i, p in enumerate(v_pts) if i % 7 == 0]
 # Remove points near the waypoints and ensure the waypoints are voronoi points
@@ -92,6 +93,7 @@ v_pts.remove([1.5, 3.8])
 v_pts.remove([1.5, 4.5])
 v_pts.append([4.0, 6.2])
 v_pts.append([1.5, 4.0])
+'''
 print(v_pts)
 
 # Initialize publisher, map of april tags, and waypoints
