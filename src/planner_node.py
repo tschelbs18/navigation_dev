@@ -37,17 +37,6 @@ def v_check(p, obstacles, boundaries):
         return False
 
 
-# Reduce Density of resulting voronoi points
-def dedupe_vpts(v_pts):
-    deduped = []
-    for pt in v_pts:
-        if 2.9 <= pt[0] <= 5.1 and (pt[1] == 1.7 or pt[1] == 6.3):
-            pass
-        else:
-            deduped.append(pt)
-    return deduped
-
-
 # Initialize Walls of boundary points
 l_wall = [[0.0, y / 10.0] for y in range(0, 81)]
 r_wall = [[8.0, y / 10.0] for y in range(0, 81)]
@@ -80,20 +69,6 @@ for x in range(20, 61):
         if v_check([x / 10.0, y / 10.0], obstacle_walls, walls):
             v_pts.append([x / 10.0, y / 10.0])
 
-# Reduce density of found points by deduplicating very similar ones and random others
-'''
-v_pts = dedupe_vpts(v_pts)
-v_pts = [p for i, p in enumerate(v_pts) if i % 7 == 0]
-# Remove points near the waypoints and ensure the waypoints are voronoi points
-v_pts.remove([6.0, 1.9])
-v_pts.remove([2.0, 6.1])
-v_pts.remove([4.3, 6.2])
-v_pts.remove([3.6, 6.2])
-v_pts.remove([1.5, 3.8])
-v_pts.remove([1.5, 4.5])
-v_pts.append([4.0, 6.2])
-v_pts.append([1.5, 4.0])
-'''
 print(v_pts)
 
 # Initialize publisher, map of april tags, and waypoints
