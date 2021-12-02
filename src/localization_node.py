@@ -79,6 +79,7 @@ def tag_callback(msg):
     
             # Return position, orientation, and april tag id
             pose_msg.pose.matrix = robot_pos
+            print("Robot Position {}".format(robot_pos))
             
         else:
             print("I might be lost")
