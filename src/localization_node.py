@@ -24,7 +24,7 @@ april_tag_map = [[1.5, 0.0, np.pi/2, 2],
                  [0.0, 4.0, 0.0, 2],
                  [0.0, 1.5, 0.0, 1]]
 
-robot_pos = [7.0, 7.0, np.pi]
+robot_pos = [1.0, 1.0, 0.0]
 
 
 def tag_callback(msg):
