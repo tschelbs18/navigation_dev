@@ -74,6 +74,7 @@ def tag_callback(msg):
             frame_fix = np.reshape(
                 np.array([-1, 0, 0, 0, -1, 0, 0, 0, -1]), (3, 3))
             camera_pos = np.matmul(frame_fix, camera_pos)
+            print(camera_pos)
 
             robot_pos[0] = april_tag_map[april_tag_min_index][0] + camera_pos[2]*np.cos(
                 april_tag_map[april_tag_min_index][2]) - camera_pos[0]*np.sin(april_tag_map[april_tag_min_index][2])
