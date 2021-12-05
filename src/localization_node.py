@@ -75,12 +75,11 @@ def tag_callback(msg):
             frame_fix = np.reshape(
                 np.array([-1, 0, 0, 0, -1, 0, 0, 0, -1]), (3, 3))
             camera_pos = np.matmul(frame_fix, camera_pos)
-            print(camera_pos)
 
             robot_pos[0] = april_tag_map[april_tag_min_index][0] + 3.28084*camera_pos[2]*np.cos(
-                april_tag_map[april_tag_min_index][2]) - 3.28084*camera_pos[0]*np.sin(april_tag_map[april_tag_min_index][2])
+                april_tag_map[april_tag_min_index][2]) + 3.28084*camera_pos[0]*np.sin(april_tag_map[april_tag_min_index][2])
             robot_pos[1] = april_tag_map[april_tag_min_index][1] + 3.28084*camera_pos[2]*np.sin(
-                april_tag_map[april_tag_min_index][2]) + 3.28084*camera_pos[0]*np.cos(april_tag_map[april_tag_min_index][2])
+                april_tag_map[april_tag_min_index][2]) - 3.28084*camera_pos[0]*np.cos(april_tag_map[april_tag_min_index][2])
 
             # Retrieve orientation where 0 is looking at april tag, positive is looking to the right of april tag
             robot_pos[2] = -1*np.pi + april_tag_map[april_tag_min_index][2] + \
