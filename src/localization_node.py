@@ -57,8 +57,6 @@ def tag_callback(msg):
                 april_tag_min_index = j
 
         print(april_tag_map[april_tag_min_index])
-        print(april_tag)
-        print(april_tag_min_distance)
 
         if april_tag_min_distance < 0.7 and april_tag_map[j][3] == msg.ids[x_argmin]:
 
@@ -85,7 +83,7 @@ def tag_callback(msg):
                 april_tag_map[april_tag_min_index][2]) + 3.28084*camera_pos[0]*np.cos(april_tag_map[april_tag_min_index][2])
 
             # Retrieve orientation where 0 is looking at april tag, positive is looking to the right of april tag
-            robot_pos[2] = -np.pi - april_tag_map[april_tag_min_index][2] + \
+            robot_pos[2] = -1*np.pi + april_tag_map[april_tag_min_index][2] + \
                 matrix[2] * (np.pi/-2)
             # Keep robot_pos bounded by [-2pi, 2pi]
             if robot_pos[2] > 2*np.pi:
