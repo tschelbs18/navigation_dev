@@ -113,8 +113,7 @@ def pose_callback(msg):
         # right_turn(1, args.left_turn_speed, args.right_turn_speed)
     else:
         # Once found, determine position relative to april tag & convert to feet
-        x, y, orientation, tag_id = t_matrix.matrix[0], t_matrix.matrix[1], t_matrix.matrix[2], t_matrix.matrix[3]
-        print("Tag ID: " + str(tag_id))
+        x, y, orientation, tag_id = t_matrix.matrix[0], t_matrix.matrix[1], t_matrix.matrix[2]
         print('x: ' + str(x))
         print('y: ' + str(y))
         print('orientation: ' + str(orientation))
