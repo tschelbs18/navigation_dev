@@ -24,7 +24,7 @@ april_tag_map = [[1.5, 0.0, np.pi/2, 2],
                  [0.0, 4.0, 0.0, 2],
                  [0.0, 1.5, 0.0, 1]]
 
-robot_pos = [7.0, 1.0, 0.0]
+robot_pos = [7.0, 1.0, np.pi/2]
 
 
 def tag_callback(msg):
@@ -42,7 +42,7 @@ def tag_callback(msg):
         x_argmin = np.argmin(x_min)
         matrix = list(msg.detections[x_argmin].matrix[:12])
 
-        # Get position of robot from april tags
+        # Get position of april tag from robot
         april_tag = [robot_pos[0] + 3.28084*matrix[11]*np.cos(robot_pos[2]) + 3.28084*matrix[3]*np.sin(robot_pos[2]),
                      robot_pos[1] + 3.28084*matrix[11]*np.sin(robot_pos[2]) + 3.28084*matrix[3]*np.cos(robot_pos[2])]
 
