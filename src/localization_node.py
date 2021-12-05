@@ -31,6 +31,7 @@ def tag_callback(msg):
 
     pose_msg = Pose()
     pose_msg.header.stamp = msg.header.stamp
+    global robot_pos
 
     camera_distance = 0.07
 
@@ -86,6 +87,11 @@ def tag_callback(msg):
             # Retrieve orientation where 0 is looking at april tag, positive is looking to the right of april tag
             robot_pos[2] = -np.pi - april_tag_map[april_tag_min_index][2] + \
                 matrix[2] * (np.pi/-2)
+            # Keep robot_pos bounded by [-2pi, 2pi]
+            if robot_pos[2] > 2*np.pi:
+                robot_pos -= 2*np.pi
+            elif robot_pos[2] < 2*np.pi:
+                robot_pos += 2*np.pi
 
             # Return position, orientation, and april tag id
             pose_msg.pose.matrix = robot_pos
