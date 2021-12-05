@@ -57,6 +57,7 @@ def tag_callback(msg):
                 april_tag_min_index = j
 
         print(april_tag_map[april_tag_min_index])
+        print(april_tag)
 
         if april_tag_min_distance < 0.7 and april_tag_map[j][3] == msg.ids[x_argmin]:
 
