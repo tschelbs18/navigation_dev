@@ -86,9 +86,9 @@ def tag_callback(msg):
                 matrix[2] * (np.pi/-2)
             # Keep robot_pos bounded by [-2pi, 2pi]
             if robot_pos[2] > 2*np.pi:
-                robot_pos[2] -= 2*np.pi
+                robot_pos[2] = robot_pos[2] - 2*np.pi
             elif robot_pos[2] < 2*np.pi:
-                robot_pos[2] += 2*np.pi
+                robot_pos[2] = robot_pos[2] + 2*np.pi
 
             # Return position, orientation, and april tag id
             pose_msg.pose.matrix = robot_pos
