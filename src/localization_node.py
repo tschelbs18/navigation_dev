@@ -45,7 +45,7 @@ def tag_callback(msg):
 
         # Get position of april tag from robot
         april_tag = [robot_pos[0] + 3.28084*matrix[11]*np.cos(robot_pos[2]) + 3.28084*matrix[3]*np.sin(robot_pos[2]),
-                     robot_pos[1] + 3.28084*matrix[11]*np.sin(robot_pos[2]) - 3.28084*matrix[3]*np.cos(robot_pos[2])]
+                     robot_pos[1] + 3.28084*matrix[11]*np.sin(robot_pos[2]) + 3.28084*matrix[3]*np.cos(robot_pos[2])]
 
         april_tag_min_distance = 1000
         april_tag_min_index = -1
