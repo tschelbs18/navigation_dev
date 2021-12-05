@@ -11,20 +11,20 @@ from navigation_dev.msg import Pose
 
 pose_pub = rospy.Publisher('/current_pose', Pose, queue_size=2)
 
-april_tag_map = [[1.5, 0, np.pi/2, 2],
-                 [4.0, 0, np.pi/2, 1],
-                 [6.5, 0, np.pi/2, 2],
+april_tag_map = [[1.5, 0.0, np.pi/2, 2],
+                 [4.0, 0.0, np.pi/2, 1],
+                 [6.5, 0.0, np.pi/2, 2],
                  [8.0, 1.5, np.pi, 1],
                  [8.0, 4.0, np.pi, 2],
                  [8.0, 6.5, np.pi, 1],
                  [6.5, 8.0, 3*np.pi/2, 1],
                  [4.0, 8.0, 3*np.pi/2, 2],
                  [1.5, 8.0, 3*np.pi/2, 1],
-                 [0, 6.5, 0, 1],
-                 [0, 4.0, 0, 2],
-                 [0, 1.5, 0, 1]]
+                 [0.0, 6.5, 0.0, 1],
+                 [0.0, 4.0, 0.0, 2],
+                 [0.0, 1.5, 0.0, 1]]
 
-robot_pos = [1, 1, 0]
+robot_pos = [1.0, 1.0, 0.0]
 
 
 def tag_callback(msg):
@@ -55,6 +55,8 @@ def tag_callback(msg):
                 april_tag_min_distance = april_tag_distance
                 april_tag_min_index = j
 
+        print(april_tag_map[april_tag_min_index])
+
         if april_tag_min_distance < 0.7 and april_tag_map[j][3] == msg.ids[x_argmin]:
 
             rotation_matrix = matrix[:3] + matrix[4:7] + matrix[8:11]
@@ -78,9 +80,9 @@ def tag_callback(msg):
             robot_pos[1] = april_tag_map[april_tag_min_index][1] - camera_pos[2]*np.sin(
                 april_tag_map[april_tag_min_index][2]) + camera_pos[0]*np.cos(april_tag_map[april_tag_min_index][2])
 
-            # Retrive orientation where 0 is looking at april tag, positive is looking to the left of april tag
+            # Retrieve orientation where 0 is looking at april tag, positive is looking to the right of april tag
             robot_pos[2] = april_tag_map[april_tag_min_index][2] * \
-                matrix[2] * (np.pi/2)
+                matrix[2] * (np.pi/-2)
 
             # Return position, orientation, and april tag id
             pose_msg.pose.matrix = robot_pos
