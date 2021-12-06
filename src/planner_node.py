@@ -25,6 +25,7 @@ start = [2, 2]
 robot_width = .4583  # feet
 robot_length = .4167  # feet
 c_size = [4, 4]
+side_move = 0.5
 
 # Theoretically traverse the space to plan path
 waypoints = []
@@ -35,10 +36,10 @@ while position != finish and position[1] <= finish[1]:
     # Turn right
     if x == start[0]:
         waypoints.append([finish[0], y])
-        waypoints.append([finish[0], y + 0.25])
+        waypoints.append([finish[0], y + side_move])
     elif x == finish[0]:
         waypoints.append([start[0], y])
-        waypoints.append([start[0], y + 0.25])
+        waypoints.append([start[0], y + side_move])
     position = waypoints[-1]
 # Remove unnecessary turn at the end
 waypoints.pop()
@@ -133,7 +134,7 @@ def pose_callback(msg):
 
         # Determine actions needed to reach next waypoint (if more than .1 feet away)
         print("Distance Remaining" + str(e_dist(destination, [x, y])))
-        if e_dist(destination, [x, y]) > .15:
+        if e_dist(destination, [x, y]) > .20:
             # Big move for more than 0.5 feet away
             if abs(needed_turn) < 0.25 and e_dist(destination, [x, y]) > .5:
                 # Move forward towards next point
