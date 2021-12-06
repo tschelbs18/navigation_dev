@@ -24,7 +24,7 @@ april_tag_map = [[1.5, 0.0, np.pi/2, 2],
                  [0.0, 4.0, 0.0, 2],
                  [0.0, 1.5, 0.0, 1]]
 
-robot_pos = [2.0, 2.0, 0.0]
+robot_pos = [6.0, 2.0, np.pi/2]
 
 
 def tag_callback(msg):
@@ -39,7 +39,8 @@ def tag_callback(msg):
 
         # Get first 12 elements of detections which are rotation matrix and translation vector
         # Note we only consider the april tag found with the lowest relative orientation, to avoid confusion
-        x_min = [abs(i.matrix[3]*np.cos(i.matrix[10]*np.pi/2)) for i in msg.detections]
+        x_min = [abs(i.matrix[3]*np.cos(i.matrix[10]*np.pi/2))
+                 for i in msg.detections]
         # x_min = [abs(i.matrix[2]) for i in msg.detections]
         x_argmin = np.argmin(x_min)
         matrix = list(msg.detections[x_argmin].matrix[:12])

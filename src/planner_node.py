@@ -133,7 +133,7 @@ def pose_callback(msg):
 
         # Determine actions needed to reach next waypoint (if more than .1 feet away)
         print("Distance Remaining" + str(e_dist(destination, [x, y])))
-        if e_dist(destination, [x, y]) > .25:
+        if e_dist(destination, [x, y]) > .35:
             # Big move for more than 0.5 feet away
             if abs(needed_turn) < 0.20 and e_dist(destination, [x, y]) > .5:
                 # Move forward towards next point
@@ -161,8 +161,8 @@ def pose_callback(msg):
                     x, y, orientation))
         else:
             # Arrived at destination
-            print("Waypoint reached, current position is x = {}, y = {} with an error of {}".format(
-                x, y, np.sqrt(x**2 + y**2)))
+            print("Waypoint reached, current position is x = {}, y = {}".format(
+                x, y))
             waypoints.pop(0)
 
 
