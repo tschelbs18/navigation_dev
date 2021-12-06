@@ -28,6 +28,9 @@ robot_pos = [2.0, 2.0, 0.0]
 
 # Theoretically traverse the space to plan path
 waypoints = []
+start = [2, 2]
+c_size = [4, 4]
+side_move = 1.0
 position = start
 finish = [x1 + x2 for x1, x2 in zip(start, c_size)]
 while position != finish and position[1] <= finish[1]:
