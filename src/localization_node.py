@@ -71,7 +71,7 @@ def tag_callback(msg):
 
             translation_vector = -1 * \
                 np.array([3.28084*matrix[3]] + [3.28084*matrix[7]] +
-                         [3.28084*matrix[11]+camera_distance])
+                         [3.28084*(matrix[11]+camera_distance)])
 
             camera_pos = np.matmul(
                 rotation_matrix_transpose, translation_vector)
