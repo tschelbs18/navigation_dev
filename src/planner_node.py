@@ -172,14 +172,14 @@ def pose_callback(msg):
                 x, y))
             if destination[0] == 6.0:
                 print("Turning left!")
-                left_turn(10, args.left_turn_speed, args.right_turn_speed)
+                left_turn(12, args.left_turn_speed, args.right_turn_speed)
                 move_forward(
-                    2, args.left_forward_speed, args.right_forward_speed)
+                    3, args.left_forward_speed, args.right_forward_speed)
             elif destination[0] == 2.0:
                 print("Turning right!")
-                right_turn(10, args.left_turn_speed, args.right_turn_speed)
+                right_turn(12, args.left_turn_speed, args.right_turn_speed)
                 move_forward(
-                    2, args.left_forward_speed, args.right_forward_speed)
+                    3, args.left_forward_speed, args.right_forward_speed)
             waypoints.pop(0)
 
 
