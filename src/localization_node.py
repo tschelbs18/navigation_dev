@@ -58,6 +58,7 @@ def tag_callback(msg):
     global robot_pos
 
     camera_distance = 0.07
+    destination = waypoints[0]
 
     if msg.ids:
         
