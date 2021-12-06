@@ -86,7 +86,7 @@ def tag_callback(msg):
             robot_pos[0] = april_tag_map[april_tag_min_index][0] + camera_pos[2]*np.cos(
                 april_tag_map[april_tag_min_index][2]) + camera_pos[0]*np.sin(april_tag_map[april_tag_min_index][2])
             robot_pos[1] = april_tag_map[april_tag_min_index][1] + camera_pos[2]*np.sin(
-                april_tag_map[april_tag_min_index][2]) + camera_pos[0]*np.cos(april_tag_map[april_tag_min_index][2])
+                april_tag_map[april_tag_min_index][2]) - camera_pos[0]*np.cos(april_tag_map[april_tag_min_index][2])
 
             # Retrieve orientation where 0 is looking at april tag, positive is looking to the right of april tag
             robot_pos[2] = -1*np.pi + april_tag_map[april_tag_min_index][2] + \
