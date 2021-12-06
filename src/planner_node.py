@@ -170,6 +170,14 @@ def pose_callback(msg):
             # Arrived at destination
             print("Waypoint reached, current position is x = {}, y = {}".format(
                 x, y))
+            if destination[0] == 6.0:
+                left_turn(10, args.left_turn_speed, args.right_turn_speed)
+                move_forward(
+                    2, args.left_forward_speed, args.right_forward_speed)
+            elif destination[0] == 2.0:
+                right_turn(10, args.left_turn_speed, args.right_turn_speed)
+                move_forward(
+                    2, args.left_forward_speed, args.right_forward_speed)
             waypoints.pop(0)
 
 
