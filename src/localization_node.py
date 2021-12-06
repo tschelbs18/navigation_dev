@@ -54,7 +54,7 @@ def tag_callback(msg):
         for j, v in enumerate(april_tag_map):
             april_tag_distance = np.sqrt(
                 (v[0]-april_tag[0])**2 + (v[1]-april_tag[1])**2)
-            if april_tag_distance < april_tag_min_distance:
+            if april_tag_distance < april_tag_min_distance and april_tag_map[j][3] == msg.ids[x_argmin]:
                 april_tag_min_distance = april_tag_distance
                 april_tag_min_index = j
 
@@ -64,7 +64,8 @@ def tag_callback(msg):
         print(msg.ids[x_argmin])
 
         # Increased tag distance to 1.5
-        if april_tag_min_distance < 1.5 and april_tag_map[april_tag_min_index][3] == msg.ids[x_argmin]:
+        # and april_tag_map[april_tag_min_index][3] == msg.ids[x_argmin]:
+        if april_tag_min_distance < 1.5:
 
             rotation_matrix = matrix[:3] + matrix[4:7] + matrix[8:11]
             rotation_matrix = np.reshape(np.array(rotation_matrix), (3, 3))
