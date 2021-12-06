@@ -26,6 +26,27 @@ april_tag_map = [[1.5, 0.0, np.pi/2, 2],
 
 robot_pos = [2.0, 2.0, 0.0]
 
+# Theoretically traverse the space to plan path
+waypoints = []
+position = start
+finish = [x1 + x2 for x1, x2 in zip(start, c_size)]
+while position != finish and position[1] <= finish[1]:
+    x, y = position
+    # Turn right
+    if x == start[0]:
+        waypoints.append([finish[0], y])
+        waypoints.append([finish[0], y + side_move])
+    elif x == finish[0]:
+        waypoints.append([start[0], y])
+        waypoints.append([start[0], y + side_move])
+    position = waypoints[-1]
+# Remove unnecessary turn at the end
+waypoints.pop()
+
+# Euclidean Distance
+def e_dist(p1, p2):
+    return ((p2[1] - p1[1])**2 + (p2[0] - p1[0])**2)**0.5
+
 
 def tag_callback(msg):
 
@@ -36,6 +57,8 @@ def tag_callback(msg):
     camera_distance = 0.07
 
     if msg.ids:
+        
+        
 
         # Get first 12 elements of detections which are rotation matrix and translation vector
         # Note we only consider the april tag found with the lowest relative orientation, to avoid confusion
@@ -99,6 +122,14 @@ def tag_callback(msg):
                 robot_pos[2] = robot_pos[2] - 2*np.pi
             elif robot_pos[2] < -2*np.pi:
                 robot_pos[2] = robot_pos[2] + 2*np.pi
+                
+            if e_dist(destination, [robot_pos[0], robot_pos[1]]) < .2 and x > 5:
+                robot_pos[2] = robot_pos[2] + np.pi/2
+                waypoints.pop(0)
+            elif e_dist(destination, [robot_pos[0], robot_pos[1]]) < .2 and x < 3:
+                robot_pos[2] = robot_pos[2] - np.pi/2
+                waypoints.pop(0)
+                
 
             # Return position, orientation, and april tag id
             pose_msg.pose.matrix = robot_pos
