@@ -71,8 +71,8 @@ def tag_callback(msg):
             rotation_matrix_transpose = np.transpose(rotation_matrix)
 
             translation_vector = -1 * \
-                np.array([3.28084*matrix[3]] + [3.28084*matrix[7]] +
-                         [3.28084*(matrix[11]+camera_distance)])
+                np.array([matrix[3]] + [matrix[7]] +
+                         [matrix[11] + camera_distance])
 
             camera_pos = np.matmul(
                 rotation_matrix_transpose, translation_vector)
@@ -84,10 +84,10 @@ def tag_callback(msg):
 
             print(camera_pos)
 
-            robot_pos[0] = april_tag_map[april_tag_min_index][0] + camera_pos[2]*np.cos(
-                april_tag_map[april_tag_min_index][2]) + camera_pos[0]*np.sin(april_tag_map[april_tag_min_index][2])
-            robot_pos[1] = april_tag_map[april_tag_min_index][1] + camera_pos[2]*np.sin(
-                april_tag_map[april_tag_min_index][2]) - camera_pos[0]*np.cos(april_tag_map[april_tag_min_index][2])
+            robot_pos[0] = april_tag_map[april_tag_min_index][0] + 3.28084*camera_pos[2]*np.cos(
+                april_tag_map[april_tag_min_index][2]) + 3.28084*camera_pos[0]*np.sin(april_tag_map[april_tag_min_index][2])
+            robot_pos[1] = april_tag_map[april_tag_min_index][1] + 3.28084*camera_pos[2]*np.sin(
+                april_tag_map[april_tag_min_index][2]) - 3.28084*camera_pos[0]*np.cos(april_tag_map[april_tag_min_index][2])
 
             # Retrieve orientation where 0 is looking at april tag, positive is looking to the right of april tag
             robot_pos[2] = -1*np.pi + april_tag_map[april_tag_min_index][2] + \
