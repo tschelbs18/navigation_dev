@@ -151,12 +151,18 @@ def pose_callback(msg):
             elif needed_turn > 0:
                 # Align to next point by turning left
                 print("Turning left!")
-                left_turn(1, args.left_turn_speed, args.right_turn_speed)
+                if needed_turn > 0.75:
+                    left_turn(5, args.left_turn_speed, args.right_turn_speed)
+                else:
+                    left_turn(1, args.left_turn_speed, args.right_turn_speed)
 
             elif needed_turn < 0:
                 # Align to next point by turning right
                 print("Turning right!")
-                right_turn(1, args.left_turn_speed, args.right_turn_speed)
+                if needed_turn < -0.75:
+                    right_turn(5, args.left_turn_speed, args.right_turn_speed)
+                else:
+                    right_turn(1, args.left_turn_speed, args.right_turn_speed)
             else:
                 print("Unaccounted situation! Help! x = {}, y = {}, orientation = {}".format(
                     x, y, orientation))
