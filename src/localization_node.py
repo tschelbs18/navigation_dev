@@ -163,5 +163,5 @@ def tag_callback(msg):
 
 if __name__ == "__main__":
     rospy.init_node('localization_node')
-    rospy.Subscriber("/tag_poses", AprilDetections, tag_callback)
+    rospy.Subscriber("/tag_poses", AprilDetections, tag_callback, queue_size=1)
     rospy.spin()
