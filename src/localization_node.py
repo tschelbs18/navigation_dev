@@ -43,7 +43,7 @@ def tag_callback(msg):
         # x_min = [abs(i.matrix[2]) for i in msg.detections]
         x_argmin = np.argmin(x_min)
         matrix = list(msg.detections[x_argmin].matrix[:12])
-        print(matrix)
+        print("Matrix {}".format(matrix))
 
         # Get position of april tag from robot
         april_tag = [robot_pos[0] + 3.28084*matrix[11]*np.cos(robot_pos[2]) + 3.28084*matrix[3]*np.sin(robot_pos[2]),
@@ -58,10 +58,9 @@ def tag_callback(msg):
                 april_tag_min_distance = april_tag_distance
                 april_tag_min_index = j
 
-        print(april_tag_map[april_tag_min_index])
-        print(april_tag)
-        print(april_tag_min_distance)
-        print(msg.ids[x_argmin])
+        print("April Tag Found {}".format(april_tag_map[april_tag_min_index]))
+        print("April Tag Estimate {}".format(april_tag))
+        print("ID Found {}".format(msg.ids[x_argmin]))
 
         # Increased tag distance to 1.5
         # and april_tag_map[april_tag_min_index][3] == msg.ids[x_argmin]:
@@ -83,7 +82,7 @@ def tag_callback(msg):
                 np.array([1, 0, 0, 0, -1, 0, 0, 0, -1]), (3, 3))
             camera_pos = np.matmul(frame_fix, translation_vector)
 
-            print(camera_pos)
+            print("Camera Pos {}".format(camera_pos))
 
             robot_pos[0] = april_tag_map[april_tag_min_index][0] + 3.28084*camera_pos[2]*np.cos(
                 april_tag_map[april_tag_min_index][2]) + 3.28084*camera_pos[0]*np.sin(april_tag_map[april_tag_min_index][2])
