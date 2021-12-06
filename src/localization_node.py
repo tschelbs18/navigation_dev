@@ -133,14 +133,14 @@ def tag_callback(msg):
                 robot_pos[2] = robot_pos[2] + np.pi/2
                 waypoints.pop(0)
                 print('left')
-                time.sleep(5)
+                # time.sleep(5)
             elif e_dist(destination, [robot_pos[0], robot_pos[1]]) < .33 and robot_pos[0] < 3:
                 pose_msg.pose.matrix = robot_pos
                 pose_pub.publish(pose_msg)
                 robot_pos[2] = robot_pos[2] - np.pi/2
                 waypoints.pop(0)
                 print('right')
-                time.sleep(5)
+                # time.sleep(5)
 
             # Return position, orientation, and april tag id
             pose_msg.pose.matrix = robot_pos
