@@ -21,10 +21,10 @@ def e_dist(p1, p2):
 ctrl_pub = rospy.Publisher('/ctrl_cmd', Float32MultiArray, queue_size=2)
 move = 0.0
 stop = 1.0
-start = [1, 1]
+start = [2, 2]
 robot_width = .4583  # feet
 robot_length = .4167  # feet
-c_size = [6, 6]
+c_size = [4, 4]
 
 # Theoretically traverse the space to plan path
 waypoints = []
@@ -149,12 +149,12 @@ def pose_callback(msg):
             elif needed_turn > 0:
                 # Align to next point by turning left
                 print("Turning left!")
-                left_turn(1, args.left_turn_speed, args.right_turn_speed)
+                left_turn(2, args.left_turn_speed, args.right_turn_speed)
 
             elif needed_turn < 0:
                 # Align to next point by turning right
                 print("Turning right!")
-                right_turn(1, args.left_turn_speed, args.right_turn_speed)
+                right_turn(2, args.left_turn_speed, args.right_turn_speed)
             else:
                 print("Unaccounted situation! Help! x = {}, y = {}, orientation = {}".format(
                     x, y, orientation))
