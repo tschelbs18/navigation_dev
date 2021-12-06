@@ -133,15 +133,15 @@ def pose_callback(msg):
 
         # Determine actions needed to reach next waypoint (if more than .1 feet away)
         print("Distance Remaining" + str(e_dist(destination, [x, y])))
-        if e_dist(destination, [x, y]) > .2:
+        if e_dist(destination, [x, y]) > .15:
             # Big move for more than 0.5 feet away
-            if abs(needed_turn) < 0.20 and e_dist(destination, [x, y]) > .5:
+            if abs(needed_turn) < 0.25 and e_dist(destination, [x, y]) > .5:
                 # Move forward towards next point
                 print("Moving forward")
                 move_forward(
                     4, args.left_forward_speed, args.right_forward_speed)
             # Smaller move for less than 6 inches away
-            elif abs(needed_turn) < 0.35:
+            elif abs(needed_turn) < 0.25:
                 # Move forward towards next point
                 print("Moving forward")
                 move_forward(
