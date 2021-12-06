@@ -67,21 +67,21 @@ def tag_callback(msg):
         # and april_tag_map[april_tag_min_index][3] == msg.ids[x_argmin]:
         if april_tag_min_distance < 1.5:
 
-            rotation_matrix = matrix[:3] + matrix[4:7] + matrix[8:11]
-            rotation_matrix = np.reshape(np.array(rotation_matrix), (3, 3))
-            rotation_matrix_transpose = np.transpose(rotation_matrix)
+            # rotation_matrix = matrix[:3] + matrix[4:7] + matrix[8:11]
+            # rotation_matrix = np.reshape(np.array(rotation_matrix), (3, 3))
+            # rotation_matrix_transpose = np.transpose(rotation_matrix)
 
             translation_vector = -1 * \
                 np.array([matrix[3]] + [matrix[7]] +
-                         [matrix[11] + camera_distance])
+                          [matrix[11] + camera_distance])
 
-            camera_pos = np.matmul(
-                rotation_matrix_transpose, translation_vector)
+            # camera_pos = np.matmul(
+            #     rotation_matrix_transpose, translation_vector)
 
             # Format the matrix so that right is positive x, up is positive y (irrelevant), straight distance between robot and april tag is z
             frame_fix = np.reshape(
-                np.array([-1, 0, 0, 0, -1, 0, 0, 0, -1]), (3, 3))
-            camera_pos = np.matmul(frame_fix, camera_pos)
+                np.array([1, 0, 0, 0, -1, 0, 0, 0, -1]), (3, 3))
+            camera_pos = np.matmul(frame_fix, translation_vector)
 
             print(camera_pos)
 
