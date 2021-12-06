@@ -25,7 +25,7 @@ start = [2, 2]
 robot_width = .4583  # feet
 robot_length = .4167  # feet
 c_size = [4, 4]
-side_move = 0.5
+side_move = 1
 
 # Theoretically traverse the space to plan path
 waypoints = []
