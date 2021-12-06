@@ -139,13 +139,13 @@ def pose_callback(msg):
                 # Move forward towards next point
                 print("Moving forward")
                 move_forward(
-                    4, args.left_forward_speed, args.right_forward_speed)
+                    5, args.left_forward_speed, args.right_forward_speed)
             # Smaller move for less than 6 inches away
             elif abs(needed_turn) < 0.25:
                 # Move forward towards next point
                 print("Moving forward")
                 move_forward(
-                    2, args.left_forward_speed, args.right_forward_speed)
+                    3, args.left_forward_speed, args.right_forward_speed)
 
             elif needed_turn > 0:
                 # Align to next point by turning left
